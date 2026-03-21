@@ -71,16 +71,58 @@ export default function CertificatePage() {
   return (
     <>
       <style jsx global>{`
+        @page {
+          size: A4 landscape;
+          margin: 0;
+        }
         @media print {
-          body * { visibility: hidden !important; }
-          #certificate-container, #certificate-container * { visibility: visible !important; }
+          @page {
+            size: landscape;
+            margin: 0;
+          }
+          /* Absolute suppression of other elements */
+          nav, footer, header, #whatsapp-button, .no-print {
+            display: none !important;
+            height: 0 !important;
+            overflow: hidden !important;
+          }
+          body {
+            margin: 0 !important;
+            padding: 0 !important;
+            overflow: hidden !important;
+            height: 100vh !important;
+            width: 100vw !important;
+            background: white !important;
+          }
           #certificate-container {
-            position: absolute; left: 0; top: 0; width: 100vw;
+            position: absolute !important;
+            top: 0 !important;
+            left: 0 !important;
+            width: 100vw !important;
+            height: 100vh !important;
+            display: flex !important;
+            align-items: stretch !important;
+            justify-content: stretch !important;
+            background: white !important;
+            padding: 0 !important;
+            margin: 0 !important;
+            z-index: 99999;
+            /* Force backgrounds */
             -webkit-print-color-adjust: exact !important;
             print-color-adjust: exact !important;
           }
-          .no-print { display: none !important; }
-          nav, header, footer { display: none !important; }
+          #certificate-card {
+            width: 100% !important;
+            height: 100% !important;
+            max-width: none !important;
+            max-height: none !important;
+            aspect-ratio: auto !important;
+            border: none !important;
+            box-shadow: none !important;
+            border-radius: 0 !important;
+            margin: 0 !important;
+            padding: 0 !important;
+          }
         }
       `}</style>
 
@@ -101,7 +143,7 @@ export default function CertificatePage() {
 
       <div id="certificate-container" className="min-h-screen flex items-center justify-center bg-[#fdfaf5] py-16 px-4">
         {/* Certificate Card */}
-        <div className="relative w-full max-w-[950px] aspect-[1.414/1] bg-white rounded-[2.5rem] shadow-[0_20px_50px_rgba(12,46,26,0.1)] overflow-hidden border border-sand/50">
+        <div id="certificate-card" className="relative w-full max-w-[950px] aspect-[1.414/1] bg-white rounded-[2.5rem] shadow-[0_20px_50px_rgba(12,46,26,0.1)] overflow-hidden border border-sand/50">
 
           {/* Background Patterns & Watermark */}
           <div className="absolute inset-0 opacity-[0.03] pointer-events-none dot-pattern"></div>
@@ -128,11 +170,11 @@ export default function CertificatePage() {
           </svg>
 
           {/* Content */}
-          <div className="relative z-10 h-full flex flex-col p-12 md:p-16">
+          <div className="relative z-10 h-full flex flex-col p-12 md:p-14 lg:p-16 pb-20 md:pb-24">
 
             {/* Header Section */}
             <div className="flex-1 max-w-[55%] flex flex-col">
-              <div className="flex items-center gap-3 mb-10">
+              <div className="flex items-center gap-3 mb-8 md:mb-10">
                 <LeafLogo />
                 <div>
                   <p className="font-bold text-forest text-lg tracking-wide heading-serif">Renukiran</p>
@@ -143,10 +185,10 @@ export default function CertificatePage() {
               <h1 className="heading-serif text-4xl md:text-5xl font-black text-primary-light leading-tight mb-2">
                 Proof of Completion
               </h1>
-              <div className="w-20 h-1.5 bg-accent rounded-full mb-8"></div>
+              <div className="w-20 h-1.5 bg-accent rounded-full mb-6 md:mb-8"></div>
 
-              <div className="mb-8">
-                <p className="text-earth text-[10px] font-bold uppercase tracking-[0.2em] mb-3">
+              <div className="mb-6 md:mb-8">
+                <p className="text-earth text-[10px] font-bold uppercase tracking-[0.2em] mb-2 md:mb-3">
                   This is to officially recognize
                 </p>
                 <p className="text-primary text-3xl md:text-4xl font-black heading-serif truncate">
@@ -154,8 +196,8 @@ export default function CertificatePage() {
                 </p>
               </div>
 
-              <div className="mb-10">
-                <p className="text-earth text-[10px] font-bold uppercase tracking-[0.2em] mb-3">
+              <div className="mb-8 md:mb-10">
+                <p className="text-earth text-[10px] font-bold uppercase tracking-[0.2em] mb-2 md:mb-3">
                   For the environmental stewardship of
                 </p>
                 <h2 className="text-forest text-lg md:text-xl font-bold leading-relaxed line-clamp-2">
