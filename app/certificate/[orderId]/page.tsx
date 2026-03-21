@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from "react";
 import { useParams } from "next/navigation";
+import Script from "next/script";
 
 const LeafLogo = () => (
   <svg width="32" height="32" viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -18,6 +19,7 @@ export default function CertificatePage() {
   const orderId = params.orderId as string;
   const [data, setData] = useState<any>(null);
   const [loading, setLoading] = useState(true);
+  const [downloading, setDownloading] = useState(false);
   const [error, setError] = useState("");
 
   useEffect(() => {
@@ -31,8 +33,43 @@ export default function CertificatePage() {
       .finally(() => setLoading(false));
   }, [orderId]);
 
-  const handleDownload = () => {
-    window.print();
+  const handleDownload = async () => {
+    if (!data || !(window as any).domtoimage || !(window as any).jspdf) return;
+    setDownloading(true);
+
+    try {
+      const element = document.getElementById("certificate-card");
+      if (!element) return;
+
+      const dataUrl = await (window as any).domtoimage.toPng(element, {
+        quality: 1,
+        width: element.clientWidth * 2,
+        height: element.clientHeight * 2,
+        style: {
+          transform: 'scale(2)',
+          transformOrigin: 'top left'
+        }
+      });
+
+      const { jsPDF } = (window as any).jspdf;
+      const pdf = new jsPDF({
+        orientation: "landscape",
+        unit: "mm",
+        format: "a4",
+      });
+
+      const pdfWidth = pdf.internal.pageSize.getWidth();
+      const pdfHeight = (element.clientHeight * pdfWidth) / element.clientWidth;
+
+      pdf.addImage(dataUrl, "PNG", 0, 0, pdfWidth, pdfHeight);
+      pdf.save(`Renukiran_Certificate_${data.certificateId}.pdf`);
+    } catch (err) {
+      console.error("PDF generation failed:", err);
+      alert("Direct download failed due to browser color incompatibilities. Opening print dialog as fallback...");
+      window.print();
+    } finally {
+      setDownloading(false);
+    }
   };
 
   if (loading) {
@@ -70,50 +107,50 @@ export default function CertificatePage() {
 
   return (
     <>
+      {/* Load libraries via CDN for direct download */}
+      <Script src="https://cdnjs.cloudflare.com/ajax/libs/dom-to-image/2.6.0/dom-to-image.min.js" strategy="lazyOnload" />
+      <Script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js" strategy="lazyOnload" />
+
       <style jsx global>{`
         @page {
-          size: A4 landscape;
+          size: landscape;
           margin: 0;
         }
         @media print {
-          @page {
-            size: landscape;
-            margin: 0;
-          }
-          /* Absolute suppression of other elements */
-          nav, footer, header, #whatsapp-button, .no-print {
+          /* Keep current print logic as a fallback */
+          nav, footer, header, #whatsapp-button, .no-print, [role="navigation"] {
             display: none !important;
             height: 0 !important;
             overflow: hidden !important;
+            visibility: hidden !important;
           }
           body {
             margin: 0 !important;
             padding: 0 !important;
             overflow: hidden !important;
-            height: 100vh !important;
-            width: 100vw !important;
             background: white !important;
+            width: 100vw !important;
+            height: 100vh !important;
           }
           #certificate-container {
-            position: absolute !important;
+            position: fixed !important;
             top: 0 !important;
             left: 0 !important;
             width: 100vw !important;
             height: 100vh !important;
             display: flex !important;
-            align-items: stretch !important;
-            justify-content: stretch !important;
+            align-items: center !important;
+            justify-content: center !important;
             background: white !important;
-            padding: 0 !important;
             margin: 0 !important;
-            z-index: 99999;
-            /* Force backgrounds */
+            padding: 0 !important;
+            z-index: 999999 !important;
             -webkit-print-color-adjust: exact !important;
             print-color-adjust: exact !important;
           }
           #certificate-card {
-            width: 100% !important;
-            height: 100% !important;
+            width: 100vw !important;
+            height: 100vh !important;
             max-width: none !important;
             max-height: none !important;
             aspect-ratio: auto !important;
@@ -127,28 +164,39 @@ export default function CertificatePage() {
       `}</style>
 
       {/* Download button — hidden when printing */}
-      <div className="no-print fixed top-24 right-8 z-50">
+      <div className="no-print fixed top-24 right-8 z-[100]">
         <button
           onClick={handleDownload}
-          className="flex items-center gap-2 bg-gradient-to-r from-primary to-primary-light text-white font-bold px-6 py-3 rounded-full shadow-xl hover:shadow-2xl hover:scale-105 transition-all"
+          disabled={downloading}
+          className={`flex items-center gap-2 bg-gradient-to-r from-primary to-primary-light text-white font-bold px-8 py-4 rounded-full shadow-xl hover:shadow-2xl hover:scale-105 transition-all ${
+            downloading ? "opacity-70 cursor-not-allowed" : ""
+          }`}
         >
-          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
-            <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" />
-            <polyline points="7 10 12 15 17 10" />
-            <line x1="12" y1="15" x2="12" y2="3" />
-          </svg>
-          Save / Print Certificate
+          {downloading ? (
+            <div className="w-5 h-5 border-2 border-white/20 border-t-white rounded-full animate-spin"></div>
+          ) : (
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+              <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" />
+              <polyline points="7 10 12 15 17 10" />
+              <line x1="12" y1="15" x2="12" y2="3" />
+            </svg>
+          )}
+          {downloading ? "Generating PDF..." : "Direct Download Certificate"}
         </button>
       </div>
 
       <div id="certificate-container" className="min-h-screen flex items-center justify-center bg-[#fdfaf5] py-16 px-4">
         {/* Certificate Card */}
-        <div id="certificate-card" className="relative w-full max-w-[950px] aspect-[1.414/1] bg-white rounded-[2.5rem] shadow-[0_20px_50px_rgba(12,46,26,0.1)] overflow-hidden border border-sand/50">
+        <div 
+          id="certificate-card" 
+          className="relative w-full max-w-[950px] aspect-[1.414/1] bg-white rounded-[2.5rem] shadow-[0_20px_50px_rgba(12,46,26,0.1)] overflow-hidden border border-sand/50"
+          style={{ backgroundColor: '#ffffff' }}
+        >
 
           {/* Background Patterns & Watermark */}
           <div className="absolute inset-0 opacity-[0.03] pointer-events-none dot-pattern"></div>
           <div className="absolute top-[20%] left-[10%] opacity-[0.05] pointer-events-none">
-            <svg width="400" height="400" viewBox="0 0 24 24" fill="currentColor">
+            <svg width="400" height="400" viewBox="0 0 24 24" fill="#047857">
               <path d="M12 2L6 10H9L5 18H19L15 10H18L12 2Z" />
             </svg>
           </div>
@@ -156,11 +204,20 @@ export default function CertificatePage() {
           {/* Premium Organic Shapes (Right Side) */}
           <div className="absolute top-0 right-0 w-[50%] h-full pointer-events-none">
             {/* Dark Green Deep Base */}
-            <div className="absolute top-[-10%] right-[-10%] w-[110%] h-[120%] bg-forest rounded-bl-[80%] transform rotate-[-5deg] opacity-100 shadow-2xl"></div>
+            <div 
+              className="absolute top-[-10%] right-[-10%] w-[110%] h-[120%] rounded-bl-[80%] transform rotate-[-5deg] opacity-100 shadow-2xl"
+              style={{ backgroundColor: '#0c2e1a' }}
+            ></div>
             {/* Primary Green Mid Layer */}
-            <div className="absolute top-[-5%] right-[-5%] w-[90%] h-[100%] bg-primary rounded-bl-[70%] transform rotate-[2deg] opacity-90"></div>
+            <div 
+              className="absolute top-[-5%] right-[-5%] w-[90%] h-[100%] rounded-bl-[70%] transform rotate-[2deg] opacity-90"
+              style={{ backgroundColor: '#047857' }}
+            ></div>
             {/* Accent Gold Accent Line */}
-            <div className="absolute bottom-[20%] right-[-5%] w-[60%] h-[60%] border-4 border-accent/30 rounded-full blur-xl"></div>
+            <div 
+              className="absolute bottom-[20%] right-[-5%] w-[60%] h-[60%] border-4 border-[#d4a843] rounded-full blur-xl"
+              style={{ opacity: 0.3 }}
+            ></div>
           </div>
 
           {/* Decorative fluid lines */}
@@ -177,49 +234,49 @@ export default function CertificatePage() {
               <div className="flex items-center gap-3 mb-8 md:mb-10">
                 <LeafLogo />
                 <div>
-                  <p className="font-bold text-forest text-lg tracking-wide heading-serif">Renukiran</p>
-                  <p className="text-earth text-[10px] font-bold uppercase tracking-[0.2em] leading-none">Foundation</p>
+                  <p className="font-bold text-[#0c2e1a] text-lg tracking-wide heading-serif">Renukiran</p>
+                  <p className="text-[#6b6b5e] text-[10px] font-bold uppercase tracking-[0.2em] leading-none">Foundation</p>
                 </div>
               </div>
 
-              <h1 className="heading-serif text-4xl md:text-5xl font-black text-primary-light leading-tight mb-2">
+              <h1 className="heading-serif text-4xl md:text-5xl font-black text-[#059669] leading-tight mb-2 whitespace-nowrap">
                 Proof of Completion
               </h1>
-              <div className="w-20 h-1.5 bg-accent rounded-full mb-6 md:mb-8"></div>
+              <div className="w-20 h-1.5 bg-[#d4a843] rounded-full mb-6 md:mb-8"></div>
 
               <div className="mb-6 md:mb-8">
-                <p className="text-earth text-[10px] font-bold uppercase tracking-[0.2em] mb-2 md:mb-3">
+                <p className="text-[#6b6b5e] text-[10px] font-bold uppercase tracking-[0.2em] mb-2 md:mb-3">
                   This is to officially recognize
                 </p>
-                <p className="text-primary text-3xl md:text-4xl font-black heading-serif truncate">
+                <p className="text-[#047857] text-3xl md:text-4xl font-black heading-serif truncate">
                   {data.userName}
                 </p>
               </div>
 
               <div className="mb-8 md:mb-10">
-                <p className="text-earth text-[10px] font-bold uppercase tracking-[0.2em] mb-2 md:mb-3">
+                <p className="text-[#6b6b5e] text-[10px] font-bold uppercase tracking-[0.2em] mb-2 md:mb-3">
                   For the environmental stewardship of
                 </p>
-                <h2 className="text-forest text-lg md:text-xl font-bold leading-relaxed line-clamp-2">
+                <h2 className="text-[#0c2e1a] text-lg md:text-xl font-bold leading-relaxed line-clamp-2">
                   {treeSummary}
                 </h2>
               </div>
 
-              <div className="flex items-center gap-8 border-t border-sand pt-8 mt-auto">
+              <div className="flex items-center gap-8 border-t border-[#e8dcc8] pt-8 mt-auto">
                 <div>
-                  <p className="text-earth text-[9px]  uppercase tracking-[0.15em] mb-1 opacity-70">Date of Issue</p>
-                  <p className="text-forest font-black text-sm font-mono">{date}</p>
+                  <p className="text-[#6b6b5e] text-[9px] uppercase tracking-[0.15em] mb-1 opacity-70">Date of Issue</p>
+                  <p className="text-[#0c2e1a] font-black text-sm font-mono">{date}</p>
                 </div>
                 <div>
-                  <p className="text-earth text-[9px] font-bold uppercase tracking-[0.15em] mb-1 opacity-70">Certificate Number</p>
-                  <p className="text-forest font-black text-sm font-mono truncate">{data.certificateId}</p>
+                  <p className="text-[#6b6b5e] text-[9px] font-bold uppercase tracking-[0.15em] mb-1 opacity-70 whitespace-nowrap">Certificate Number</p>
+                  <p className="text-[#0c2e1a] font-black text-sm font-mono truncate">{data.certificateId}</p>
                 </div>
               </div>
             </div>
 
             {/* Footer Text area */}
             <div className="max-w-[55%] pt-10">
-              <p className="text-earth text-[11px] font-medium italic opacity-60 leading-relaxed">
+              <p className="text-[#6b6b5e] text-[11px] font-medium italic opacity-60 leading-relaxed">
                 Issued by Renukiran Welfare Foundation. This digital certificate confirms your contribution to ecological restoration.
               </p>
             </div>
@@ -228,7 +285,10 @@ export default function CertificatePage() {
           {/* Branding elements on the green background */}
           <div className="absolute bottom-12 right-12 z-20 flex flex-col items-end text-right">
              {/* Dynamic Total Contribution */}
-             <div className="bg-white/10 backdrop-blur-xl border border-white/20 rounded-3xl p-6 md:p-8 mb-6 shadow-2xl min-w-[180px]">
+             <div 
+                className="border rounded-3xl p-6 md:p-8 mb-6 shadow-2xl min-w-[180px]"
+                style={{ backgroundColor: 'rgba(255,255,255,0.1)', borderColor: 'rgba(255,255,255,0.2)', backdropFilter: 'blur(16px)' }}
+              >
                 <p className="text-white/60 text-[9px] font-bold uppercase tracking-[0.15em] mb-2">Total Contribution</p>
                 <p className="text-white text-3xl md:text-4xl font-black heading-serif">
                    ₹{data.totalAmount}
@@ -239,7 +299,7 @@ export default function CertificatePage() {
                 <div className="text-right">
                   <p className="text-white font-black text-xl tracking-tight heading-serif leading-none">Renukiran</p>
                 </div>
-                <div className="w-10 h-10 rounded-xl bg-white flex items-center justify-center shadow-xl">
+                <div className="w-10 h-10 rounded-xl bg-white flex items-center justify-center shadow-xl" style={{ backgroundColor: '#ffffff' }}>
                   <LeafLogo />
                 </div>
              </div>
