@@ -300,9 +300,7 @@ export default function Home() {
             {testimonials.map((t, i) => (
               <div
                 key={i}
-                className={`flex flex-col gap-4 rounded-2xl bg-surface p-6 border transition-all duration-500 ${
-                  i === activeTestimonial ? "border-accent shadow-xl shadow-accent/10 -translate-y-2" : "border-sand hover:border-primary/15 hover:shadow-md"
-                }`}
+                className="flex flex-col gap-4 rounded-2xl bg-surface p-6 border border-sand transition-all duration-500 hover:border-accent hover:shadow-xl hover:shadow-accent/10 hover:-translate-y-2"
               >
                 <div className="flex gap-0.5">
                   {Array.from({ length: t.rating }).map((_, j) => (
