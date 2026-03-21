@@ -1,0 +1,216 @@
+"use client";
+
+import { useState, useEffect } from "react";
+import { useParams } from "next/navigation";
+
+const LeafLogo = () => (
+  <svg width="32" height="32" viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg">
+    <path d="M16 2C16 2 6 8 6 18C6 23.5228 10.4772 28 16 28C21.5228 28 26 23.5228 26 18C26 8 16 2 16 2Z" fill="#047857" opacity="0.9"/>
+    <path d="M16 8C16 8 11 13 11 19C11 21.7614 13.2386 24 16 24C18.7614 24 21 21.7614 21 19C21 13 16 8 16 8Z" fill="#34d399" opacity="0.6"/>
+    <path d="M16 28V12" stroke="#faf8f3" strokeWidth="1.5" strokeLinecap="round" opacity="0.7"/>
+    <path d="M16 18L12 14" stroke="#faf8f3" strokeWidth="1" strokeLinecap="round" opacity="0.5"/>
+    <path d="M16 15L19 12" stroke="#faf8f3" strokeWidth="1" strokeLinecap="round" opacity="0.5"/>
+  </svg>
+);
+
+export default function CertificatePage() {
+  const params = useParams();
+  const orderId = params.orderId as string;
+  const [data, setData] = useState<any>(null);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState("");
+
+  useEffect(() => {
+    fetch(`/api/certificate/${orderId}`)
+      .then((res) => res.json())
+      .then((json) => {
+        if (json.error) setError(json.error);
+        else setData(json);
+      })
+      .catch(() => setError("Failed to load certificate"))
+      .finally(() => setLoading(false));
+  }, [orderId]);
+
+  const handleDownload = () => {
+    window.print();
+  };
+
+  if (loading) {
+    return (
+      <div className="min-h-screen flex items-center justify-center bg-cream">
+        <div className="text-center">
+          <div className="w-12 h-12 border-4 border-primary/20 border-t-primary rounded-full animate-spin mx-auto mb-4"></div>
+          <p className="text-earth font-medium">Loading certificate...</p>
+        </div>
+      </div>
+    );
+  }
+
+  if (error || !data) {
+    return (
+      <div className="min-h-screen flex items-center justify-center bg-cream">
+        <div className="text-center bg-white p-10 rounded-3xl border border-sand shadow-lg max-w-md">
+          <span className="text-5xl mb-4 inline-block">⚠️</span>
+          <h2 className="text-2xl font-bold text-forest mb-2">Certificate Unavailable</h2>
+          <p className="text-earth">{error || "This certificate could not be loaded."}</p>
+        </div>
+      </div>
+    );
+  }
+
+  const date = new Date(data.createdAt).toLocaleDateString("en-IN", {
+    day: "2-digit",
+    month: "2-digit",
+    year: "numeric",
+  });
+
+  const treeSummary = data.trees
+    .map((t: any) => `${t.quantity}x ${t.name}`)
+    .join(", ");
+
+  return (
+    <>
+      <style jsx global>{`
+        @media print {
+          body * { visibility: hidden !important; }
+          #certificate-container, #certificate-container * { visibility: visible !important; }
+          #certificate-container {
+            position: absolute; left: 0; top: 0; width: 100vw;
+            -webkit-print-color-adjust: exact !important;
+            print-color-adjust: exact !important;
+          }
+          .no-print { display: none !important; }
+          nav, header, footer { display: none !important; }
+        }
+      `}</style>
+
+      {/* Download button — hidden when printing */}
+      <div className="no-print fixed top-24 right-8 z-50">
+        <button
+          onClick={handleDownload}
+          className="flex items-center gap-2 bg-gradient-to-r from-primary to-primary-light text-white font-bold px-6 py-3 rounded-full shadow-xl hover:shadow-2xl hover:scale-105 transition-all"
+        >
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+            <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" />
+            <polyline points="7 10 12 15 17 10" />
+            <line x1="12" y1="15" x2="12" y2="3" />
+          </svg>
+          Save / Print Certificate
+        </button>
+      </div>
+
+      <div id="certificate-container" className="min-h-screen flex items-center justify-center bg-[#fdfaf5] py-16 px-4">
+        {/* Certificate Card */}
+        <div className="relative w-full max-w-[950px] aspect-[1.414/1] bg-white rounded-[2.5rem] shadow-[0_20px_50px_rgba(12,46,26,0.1)] overflow-hidden border border-sand/50">
+
+          {/* Background Patterns & Watermark */}
+          <div className="absolute inset-0 opacity-[0.03] pointer-events-none dot-pattern"></div>
+          <div className="absolute top-[20%] left-[10%] opacity-[0.05] pointer-events-none">
+            <svg width="400" height="400" viewBox="0 0 24 24" fill="currentColor">
+              <path d="M12 2L6 10H9L5 18H19L15 10H18L12 2Z" />
+            </svg>
+          </div>
+
+          {/* Premium Organic Shapes (Right Side) */}
+          <div className="absolute top-0 right-0 w-[50%] h-full pointer-events-none">
+            {/* Dark Green Deep Base */}
+            <div className="absolute top-[-10%] right-[-10%] w-[110%] h-[120%] bg-forest rounded-bl-[80%] transform rotate-[-5deg] opacity-100 shadow-2xl"></div>
+            {/* Primary Green Mid Layer */}
+            <div className="absolute top-[-5%] right-[-5%] w-[90%] h-[100%] bg-primary rounded-bl-[70%] transform rotate-[2deg] opacity-90"></div>
+            {/* Accent Gold Accent Line */}
+            <div className="absolute bottom-[20%] right-[-5%] w-[60%] h-[60%] border-4 border-accent/30 rounded-full blur-xl"></div>
+          </div>
+
+          {/* Decorative fluid lines */}
+          <svg className="absolute top-0 right-[40%] h-full w-48 opacity-20 pointer-events-none" viewBox="0 0 150 600" fill="none">
+            <path d="M120 0 Q40 150 100 300 Q160 450 60 600" stroke="#d4a843" strokeWidth="1" fill="none" />
+            <path d="M140 0 Q60 150 120 300 Q180 450 80 600" stroke="#047857" strokeWidth="1" fill="none" />
+          </svg>
+
+          {/* Content */}
+          <div className="relative z-10 h-full flex flex-col p-12 md:p-16">
+
+            {/* Header Section */}
+            <div className="flex-1 max-w-[55%] flex flex-col">
+              <div className="flex items-center gap-3 mb-10">
+                <LeafLogo />
+                <div>
+                  <p className="font-bold text-forest text-lg tracking-wide heading-serif">Renukiran</p>
+                  <p className="text-earth text-[10px] font-bold uppercase tracking-[0.2em] leading-none">Foundation</p>
+                </div>
+              </div>
+
+              <h1 className="heading-serif text-4xl md:text-5xl font-black text-primary-light leading-tight mb-2">
+                Proof of Completion
+              </h1>
+              <div className="w-20 h-1.5 bg-accent rounded-full mb-8"></div>
+
+              <div className="mb-8">
+                <p className="text-earth text-[10px] font-bold uppercase tracking-[0.2em] mb-3">
+                  This is to officially recognize
+                </p>
+                <p className="text-primary text-3xl md:text-4xl font-black heading-serif truncate">
+                  {data.userName}
+                </p>
+              </div>
+
+              <div className="mb-10">
+                <p className="text-earth text-[10px] font-bold uppercase tracking-[0.2em] mb-3">
+                  For the environmental stewardship of
+                </p>
+                <h2 className="text-forest text-lg md:text-xl font-bold leading-relaxed line-clamp-2">
+                  {treeSummary}
+                </h2>
+              </div>
+
+              <div className="flex items-center gap-8 border-t border-sand pt-8 mt-auto">
+                <div>
+                  <p className="text-earth text-[9px]  uppercase tracking-[0.15em] mb-1 opacity-70">Date of Issue</p>
+                  <p className="text-forest font-black text-sm font-mono">{date}</p>
+                </div>
+                <div>
+                  <p className="text-earth text-[9px] font-bold uppercase tracking-[0.15em] mb-1 opacity-70">Certificate Number</p>
+                  <p className="text-forest font-black text-sm font-mono truncate">{data.certificateId}</p>
+                </div>
+              </div>
+            </div>
+
+            {/* Footer Text area */}
+            <div className="max-w-[55%] pt-10">
+              <p className="text-earth text-[11px] font-medium italic opacity-60 leading-relaxed">
+                Issued by Renukiran Welfare Foundation. This digital certificate confirms your contribution to ecological restoration.
+              </p>
+            </div>
+          </div>
+
+          {/* Branding elements on the green background */}
+          <div className="absolute bottom-12 right-12 z-20 flex flex-col items-end text-right">
+             {/* Dynamic Total Contribution */}
+             <div className="bg-white/10 backdrop-blur-xl border border-white/20 rounded-3xl p-6 md:p-8 mb-6 shadow-2xl min-w-[180px]">
+                <p className="text-white/60 text-[9px] font-bold uppercase tracking-[0.15em] mb-2">Total Contribution</p>
+                <p className="text-white text-3xl md:text-4xl font-black heading-serif">
+                   ₹{data.totalAmount}
+                </p>
+             </div>
+             
+             <div className="flex items-center gap-4">
+                <div className="text-right">
+                  <p className="text-white font-black text-xl tracking-tight heading-serif leading-none">Renukiran</p>
+                </div>
+                <div className="w-10 h-10 rounded-xl bg-white flex items-center justify-center shadow-xl">
+                  <LeafLogo />
+                </div>
+             </div>
+          </div>
+
+          {/* Dynamic Legal Registry ID watermark */}
+          <div className="absolute bottom-4 left-1/2 -translate-x-1/2 z-20 opacity-30 w-full text-center">
+            <p className="text-black text-[10px] md:text-[9px] font-mono tracking-[0.3em] uppercase">
+              Authenticated Digital Registry ID • <span className="font-bold">{data.certificateId}</span>
+            </p>
+          </div>
+        </div>
+      </div>
+    </>
+  );
+}

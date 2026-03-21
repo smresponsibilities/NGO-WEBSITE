@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 
 const csrServices = [
   { emoji: "🌳", title: "CSR Tree Plantation", desc: "End-to-end plantation initiatives with transparent tracking, GPS tagging, and audit-ready reports.", features: ["Geo-tagged trees", "Quarterly reports", "Tax benefits under 80G"] },
@@ -12,6 +12,16 @@ const csrServices = [
 export default function CSR() {
   const [formData, setFormData] = useState({ company: "", email: "", phone: "", trees: "", message: "" });
   const [submitted, setSubmitted] = useState(false);
+  const [partners, setPartners] = useState<any[]>([]);
+
+  useEffect(() => {
+    fetch("/api/partners", { cache: "no-store" })
+      .then((res) => res.json())
+      .then((json) => {
+        if (json.data) setPartners(json.data);
+      })
+      .catch(() => {});
+  }, []);
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
@@ -54,6 +64,25 @@ export default function CSR() {
           ))}
         </div>
       </section>
+
+      {/* Corporate Partners Dynamic Section */}
+      {partners.length > 0 && (
+        <section className="py-12 border-t border-b border-sand bg-white">
+          <div className="max-w-[1280px] mx-auto px-5 text-center">
+            <p className="text-xs font-bold text-earth uppercase tracking-[0.15em] mb-8">Trusted by industry leaders in sustainability</p>
+            <div className="flex flex-wrap justify-center items-center gap-10 md:gap-16 opacity-70">
+              {partners.map((p) => (
+                <div key={p._id} className="flex flex-col items-center gap-2 group cursor-default transition-all hover:scale-105 hover:opacity-100 grayscale hover:grayscale-0">
+                  <img src={p.logoUrl} alt={p.companyName} className="h-10 md:h-14 object-contain max-w-[140px]" />
+                  <span className="text-[10px] font-bold text-accent px-2 py-0.5 bg-accent/10 rounded-full opacity-0 transition-opacity group-hover:opacity-100">
+                    {(p.treesSponsored || 0).toLocaleString()} Trees
+                  </span>
+                </div>
+              ))}
+            </div>
+          </div>
+        </section>
+      )}
 
       {/* Why Partner */}
       <section className="py-16 bg-surface">

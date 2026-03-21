@@ -5,19 +5,30 @@ import { useRouter } from "next/navigation";
 
 export default function AdminPanel() {
   const [activeTab, setActiveTab] = useState("trees");
-  const [data, setData] = useState<any>({ trees: [], projects: [], orders: [] });
+  const [data, setData] = useState<any>({ trees: [], projects: [], orders: [], partners: [] });
   const router = useRouter();
+
+  const [adminError, setAdminError] = useState("");
 
   useEffect(() => {
     fetchData();
   }, [activeTab]);
 
   const fetchData = async () => {
+    setAdminError("");
     try {
       const res = await fetch(`/api/admin/${activeTab}`, { cache: "no-store" });
+      if (!res.ok) {
+        const text = await res.text();
+        setAdminError(`FETCH ERROR: ${res.status} - ${text.substring(0, 100)}`);
+        return;
+      }
       const json = await res.json();
+      if (json.error) setAdminError(json.error);
       setData((prev: any) => ({ ...prev, [activeTab]: json.data || [] }));
-    } catch(e) {}
+    } catch(e: any) {
+      setAdminError(e.message);
+    }
   };
 
   const handleLogout = async () => {
@@ -40,12 +51,36 @@ export default function AdminPanel() {
   const [newProject, setNewProject] = useState({ title: "", description: "", location: "", targetTrees: "" });
   const handleAddProject = async (e: React.FormEvent) => {
     e.preventDefault();
-    await fetch("/api/admin/projects", { 
+    setAdminError("");
+    const res = await fetch("/api/admin/projects", { 
       method: "POST", 
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ ...newProject, targetTrees: Number(newProject.targetTrees) || 100 }) 
     });
+    const json = await res.json();
+    if (!res.ok || json.error) {
+      setAdminError(json.error || "POST Failed");
+      return;
+    }
     setNewProject({ title: "", description: "", location: "", targetTrees: "" });
+    fetchData();
+  };
+
+  const [newPartner, setNewPartner] = useState({ companyName: "", logoUrl: "", treesSponsored: "", description: "" });
+  const handleAddPartner = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setAdminError("");
+    const res = await fetch("/api/admin/partners", { 
+      method: "POST", 
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ ...newPartner, treesSponsored: Number(newPartner.treesSponsored) || 0 }) 
+    });
+    const json = await res.json();
+    if (!res.ok || json.error) {
+      setAdminError(json.error || "POST Failed");
+      return;
+    }
+    setNewPartner({ companyName: "", logoUrl: "", treesSponsored: "", description: "" });
     fetchData();
   };
 
@@ -59,8 +94,8 @@ export default function AdminPanel() {
     fetchData();
   };
 
-  const handleDeleteItem = async (type: "trees" | "projects", id: string) => {
-    if (confirm(`Are you sure you want to delete this ${type === "trees" ? "tree" : "project"}?`)) {
+  const handleDeleteItem = async (type: "trees" | "projects" | "partners", id: string) => {
+    if (confirm(`Are you sure you want to delete this ${type === "trees" ? "tree" : type === "projects" ? "project" : "partner"}?`)) {
       await fetch(`/api/admin/${type}`, {
         method: "DELETE",
         headers: { "Content-Type": "application/json" },
@@ -93,6 +128,9 @@ export default function AdminPanel() {
           <button onClick={() => setActiveTab("orders")} className={`text-left px-5 py-3.5 rounded-xl transition-all font-medium flex items-center gap-3 ${activeTab === 'orders' ? 'bg-primary text-white shadow-md' : 'text-sand hover:bg-white/10'}`}>
             <span className="text-xl">📜</span> Validations
           </button>
+          <button onClick={() => setActiveTab("partners")} className={`text-left px-5 py-3.5 rounded-xl transition-all font-medium flex items-center gap-3 ${activeTab === 'partners' ? 'bg-primary text-white shadow-md' : 'text-sand hover:bg-white/10'}`}>
+            <span className="text-xl">🤝</span> CSR Partners
+          </button>
         </nav>
         <button onClick={handleLogout} className="mb-8 px-5 py-3.5 hover:ring-2 ring-red-500/50 bg-red-500/20 text-red-100 font-bold rounded-xl transition-all flex items-center gap-2">
           <span>⏏</span> Secure Logout
@@ -101,7 +139,13 @@ export default function AdminPanel() {
 
       <main className="flex-1 p-10 pt-32 overflow-y-auto">
         <h1 className="text-4xl font-serif font-bold text-forest mb-1 capitalize border-b border-sand pb-4">{activeTab} Management</h1>
-        <p className="text-earth text-sm font-medium mb-10">Make dynamic changes directly to the MongoDB backend clusters payload.</p>
+        <p className="text-earth text-sm font-medium mb-6">Make dynamic changes directly to the MongoDB backend clusters payload.</p>
+        
+        {adminError && (
+          <div className="bg-red-50 text-red-500 font-bold p-4 mb-8 rounded-xl border border-red-200 shadow-sm">
+            🚨 Error Occurred: {adminError}
+          </div>
+        )}
         
         {activeTab === "trees" && (
           <div className="flex flex-col lg:flex-row gap-8 items-start">
@@ -219,6 +263,34 @@ export default function AdminPanel() {
                   <p className="font-bold text-forest mt-4">No tree orders in the database.</p>
                 </div>
               )}
+          </div>
+        )}
+
+        {activeTab === "partners" && (
+          <div className="flex flex-col lg:flex-row gap-8 items-start">
+            <form onSubmit={handleAddPartner} className="bg-white p-7 rounded-[2rem] shadow-xl shadow-forest/5 border border-sand w-full lg:w-1/3 flex flex-col gap-4">
+              <h3 className="font-bold text-forest text-lg border-b border-sand pb-3 mb-1">Add Active Partner</h3>
+              <input placeholder="Company Name" required value={newPartner.companyName} onChange={e => setNewPartner({...newPartner, companyName: e.target.value})} className="border rounded-xl px-4 py-2.5 w-full outline-none focus:border-primary focus:ring-1 focus:ring-primary/20 bg-cream" />
+              <input placeholder="Logo Image URL" required value={newPartner.logoUrl} onChange={e => setNewPartner({...newPartner, logoUrl: e.target.value})} className="border rounded-xl px-4 py-2.5 w-full outline-none focus:border-primary focus:ring-1 focus:ring-primary/20 bg-cream" />
+              <input placeholder="Trees Sponsored" type="number" required value={newPartner.treesSponsored} onChange={e => setNewPartner({...newPartner, treesSponsored: e.target.value})} className="border rounded-xl px-4 py-2.5 w-full outline-none focus:border-primary focus:ring-1 focus:ring-primary/20 bg-cream" />
+              <textarea placeholder="Partnership Description" value={newPartner.description} onChange={e => setNewPartner({...newPartner, description: e.target.value})} className="border rounded-xl px-4 py-2.5 w-full outline-none focus:border-primary focus:ring-1 focus:ring-primary/20 bg-cream h-24 resize-none" />
+              <button className="bg-forest mt-2 text-white font-bold py-3.5 rounded-xl hover:bg-primary transition-colors shadow-md">Certify Partnership</button>
+            </form>
+            <div className="w-full lg:w-2/3 grid grid-cols-1 md:grid-cols-2 gap-4">
+              {data.partners.map((p: any) => (
+                <div key={p._id} className="bg-white p-6 justify-between rounded-3xl border border-sand shadow-sm hover:-translate-y-1 transition-transform cursor-default flex flex-col">
+                  <div>
+                    <div className="flex justify-between items-start mb-4">
+                      <img src={p.logoUrl} alt="logo" className="h-12 w-auto object-contain max-w-[120px] rounded" />
+                      <button onClick={() => handleDeleteItem("partners", p._id)} className="text-[10px] uppercase font-bold text-red-500 px-3 py-1 bg-red-50 rounded-full hover:bg-red-500 hover:text-white transition-colors border border-red-100 shadow-sm">Delete</button>
+                    </div>
+                    <p className="font-black text-forest text-xl mb-1">{p.companyName}</p>
+                    <p className="text-sm font-bold text-primary mb-3">{(p.treesSponsored || 0).toLocaleString()} Trees Sponsored</p>
+                    <p className="text-[13px] text-bark leading-relaxed">{p.description}</p>
+                  </div>
+                </div>
+              ))}
+            </div>
           </div>
         )}
       </main>

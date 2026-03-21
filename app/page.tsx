@@ -341,9 +341,9 @@ export default function Home() {
                 <Link href="/csr" className="w-fit h-12 flex items-center justify-center px-8 rounded-full bg-forest text-white text-sm font-bold hover:bg-forest-light transition-all shadow-lg hover:shadow-xl">
                   Partner With Us →
                 </Link>
-                <Link href="/csr" className="w-fit h-12 flex items-center justify-center px-8 rounded-full border-2 border-sand text-forest text-sm font-bold hover:border-primary hover:text-primary transition-all">
-                  Download Brochure
-                </Link>
+                <a href="/brochure.pdf" download className="w-fit h-12 flex items-center justify-center px-8 rounded-full border-2 border-sand text-forest text-sm font-bold hover:border-primary hover:text-primary transition-all">
+                  📄 Download Brochure
+                </a>
               </div>
             </div>
             <div className="md:w-1/2 rounded-3xl overflow-hidden h-80 w-full bg-cover bg-center shadow-2xl shadow-forest/15 hover:shadow-3xl transition-shadow" style={{backgroundImage: 'url("https://images.unsplash.com/photo-1464822759023-fed622ff2c3b?auto=format&fit=crop&q=80")'}}></div>

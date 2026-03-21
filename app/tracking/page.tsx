@@ -1,13 +1,6 @@
 "use client";
 
-import { useState } from "react";
-
-const projects = [
-  { id: 1, name: "Aravalli Reforestation 2026", location: "Rajasthan", trees: 15000, planted: 11250, species: ["Neem", "Banyan", "Pipal"], status: "Active", img: "https://images.unsplash.com/photo-1542601906990-b4d3fb778b09?auto=format&fit=crop&w=600&q=80", startDate: "Jan 2026" },
-  { id: 2, name: "Western Ghats Restoration", location: "Karnataka", trees: 25000, planted: 22500, species: ["Teak", "Sandalwood"], status: "Active", img: "https://images.unsplash.com/photo-1448375240586-882707db888b?auto=format&fit=crop&w=600&q=80", startDate: "Sep 2025" },
-  { id: 3, name: "Sundarbans Mangrove Drive", location: "West Bengal", trees: 10000, planted: 10000, species: ["Mangrove", "Sundari"], status: "Completed", img: "https://images.unsplash.com/photo-1513836279014-a89f7a76ae86?auto=format&fit=crop&w=600&q=80", startDate: "Mar 2025" },
-  { id: 4, name: "Delhi NCR Urban Forest", location: "Delhi", trees: 5000, planted: 2100, species: ["Gulmohar", "Neem"], status: "Active", img: "https://images.unsplash.com/photo-1502082553048-f009c37129b9?auto=format&fit=crop&w=600&q=80", startDate: "Feb 2026" },
-];
+import { useState, useEffect } from "react";
 
 const timeline = [
   { date: "Mar 2026", event: "Delhi NCR Miyawaki Forest — 500 trees planted", emoji: "🌱" },
@@ -18,12 +11,24 @@ const timeline = [
 ];
 
 export default function Tracking() {
-  const [selectedId, setSelectedId] = useState<number | null>(null);
+  const [selectedId, setSelectedId] = useState<string | null>(null);
   const [filter, setFilter] = useState("all");
+  const [projects, setProjects] = useState<any[]>([]);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    fetch("/api/projects", { cache: "no-store" })
+      .then(res => res.json())
+      .then(json => {
+        setProjects(json.data || []);
+        setLoading(false);
+      })
+      .catch(() => setLoading(false));
+  }, []);
 
   const filtered = filter === "all" ? projects : projects.filter((p) => p.status.toLowerCase() === filter);
-  const totalPlanned = projects.reduce((s, p) => s + p.trees, 0);
-  const totalPlanted = projects.reduce((s, p) => s + p.planted, 0);
+  const totalPlanned = projects.reduce((s, p) => s + (p.targetTrees || 0), 0);
+  const totalPlanted = projects.reduce((s, p) => s + (p.treesPlanted || 0), 0);
 
   return (
     <main className="flex-1 w-full max-w-[1400px] mx-auto px-5 lg:px-10 py-8 space-y-10">
@@ -75,41 +80,51 @@ export default function Tracking() {
           </div>
         </div>
 
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-5">
-          {filtered.map((p) => (
-            <article key={p.id} className={`bg-surface rounded-2xl overflow-hidden border transition-all duration-300 cursor-pointer hover:-translate-y-1 ${selectedId === p.id ? "border-primary shadow-xl" : "border-sand hover:shadow-lg hover:border-primary/15"}`} onClick={() => setSelectedId(selectedId === p.id ? null : p.id)}>
-              <div className="flex flex-col md:flex-row">
-                <div className="w-full md:w-48 h-40 md:h-auto shrink-0 bg-cover bg-center" style={{backgroundImage: `url("${p.img}")`}}></div>
-                <div className="flex-1 p-5">
-                  <div className="flex items-start justify-between mb-2">
-                    <div>
-                      <h3 className="font-bold text-forest">{p.name}</h3>
-                      <p className="text-sm text-earth mt-0.5">📍 {p.location}</p>
+        {loading ? (
+          <div className="flex flex-col items-center justify-center py-20 bg-surface rounded-2xl border border-sand">
+            <span className="text-4xl anim-pulse-dot mb-4">🌿</span>
+            <p className="font-bold text-forest">Loading impact data across clusters...</p>
+          </div>
+        ) : filtered.length === 0 ? (
+          <div className="flex flex-col items-center justify-center py-20 bg-surface rounded-2xl border border-sand">
+             <span className="text-4xl mb-4 opacity-50">📭</span>
+             <p className="font-bold text-forest">No projects match your filter condition.</p>
+          </div>
+        ) : (
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-5">
+            {filtered.map((p) => (
+              <article key={p._id} className={`bg-surface rounded-2xl overflow-hidden border transition-all duration-300 cursor-pointer hover:-translate-y-1 ${selectedId === p._id ? "border-primary shadow-xl" : "border-sand hover:shadow-lg hover:border-primary/15"}`} onClick={() => setSelectedId(selectedId === p._id ? null : p._id)}>
+                <div className="flex flex-col md:flex-row h-full">
+                  <div className="w-full md:w-32 h-32 md:h-auto shrink-0 bg-cover bg-center bg-forest flex items-center justify-center" style={{backgroundImage: `url("https://images.unsplash.com/photo-1542601906990-b4d3fb778b09?auto=format&fit=crop&w=300&q=80")`}}></div>
+                  <div className="flex-1 p-5 flex flex-col">
+                    <div className="flex items-start justify-between mb-2">
+                      <div>
+                        <h3 className="font-bold text-forest">{p.title}</h3>
+                        <p className="text-sm text-earth mt-0.5">📍 {p.location}</p>
+                      </div>
+                      <span className={`px-3 py-1 rounded-full text-[11px] font-bold ${p.status === "Active" ? "bg-primary/10 text-primary" : "bg-accent/15 text-accent-dark"}`}>{p.status}</span>
                     </div>
-                    <span className={`px-3 py-1 rounded-full text-[11px] font-bold ${p.status === "Active" ? "bg-primary/10 text-primary" : "bg-accent/15 text-accent-dark"}`}>{p.status}</span>
-                  </div>
-                  <div className="mt-4">
-                    <div className="flex justify-between text-sm mb-1">
-                      <span className="text-earth">{p.planted.toLocaleString()} / {p.trees.toLocaleString()}</span>
-                      <span className="font-bold text-primary">{Math.round((p.planted / p.trees) * 100)}%</span>
-                    </div>
-                    <div className="w-full h-2.5 bg-cream-dark rounded-full overflow-hidden">
-                      <div className="h-full bg-gradient-to-r from-primary to-leaf rounded-full anim-progress" style={{ width: `${(p.planted / p.trees) * 100}%` }}></div>
-                    </div>
-                  </div>
-                  {selectedId === p.id && (
-                    <div className="mt-4 pt-4 border-t border-cream-dark space-y-3 anim-fade-in">
-                      <p className="text-earth text-xs uppercase font-semibold">Started: {p.startDate}</p>
-                      <div className="flex flex-wrap gap-2">
-                        {p.species.map((s) => (<span key={s} className="text-xs bg-primary/8 text-primary px-2.5 py-1 rounded-full font-semibold">{s}</span>))}
+                    <div className="mt-auto pt-4">
+                      <div className="flex justify-between text-sm mb-1">
+                        <span className="text-earth">{(p.treesPlanted || 0).toLocaleString()} / {(p.targetTrees || 100).toLocaleString()}</span>
+                        <span className="font-bold text-primary">{Math.min(100, Math.round(((p.treesPlanted || 0) / (p.targetTrees || 1)) * 100))}%</span>
+                      </div>
+                      <div className="w-full h-2.5 bg-cream-dark rounded-full overflow-hidden">
+                        <div className="h-full bg-gradient-to-r from-primary to-leaf rounded-full anim-progress" style={{ width: `${Math.min(100, ((p.treesPlanted || 0) / (p.targetTrees || 1)) * 100)}%` }}></div>
                       </div>
                     </div>
-                  )}
+                    {selectedId === p._id && (
+                      <div className="mt-4 pt-4 border-t border-cream-dark space-y-3 anim-fade-in">
+                        <p className="text-earth text-xs uppercase font-semibold">Started: {new Date(p.createdAt).toLocaleDateString()}</p>
+                        <p className="text-sm text-bark font-medium">{p.description}</p>
+                      </div>
+                    )}
+                  </div>
                 </div>
-              </div>
-            </article>
-          ))}
-        </div>
+              </article>
+            ))}
+          </div>
+        )}
       </section>
 
       {/* Timeline */}
