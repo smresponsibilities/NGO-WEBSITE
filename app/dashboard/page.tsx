@@ -1,162 +1,103 @@
 "use client";
 
+import { useState, useEffect } from "react";
+import { useRouter } from "next/navigation";
 import Link from "next/link";
 
-const contributions = [
-  { project: "Green Karnataka", date: "Feb 15, 2026", qty: 25, species: "Mango, Neem", status: "Growing" },
-  { project: "Reforest Aravali", date: "Jan 12, 2026", qty: 12, species: "Banyan, Pipal", status: "Growing" },
-  { project: "Sundarbans Mangrove", date: "Nov 8, 2025", qty: 50, species: "Mangrove", status: "Matured" },
-  { project: "Delhi NCR Urban", date: "Oct 5, 2025", qty: 18, species: "Gulmohar", status: "Growing" },
-  { project: "Western Ghats", date: "Aug 22, 2025", qty: 20, species: "Teak, Sandalwood", status: "Growing" },
-];
+export default function UserDashboard() {
+  const [orders, setOrders] = useState([]);
+  const [user, setUser] = useState<{name: string, email: string} | null>(null);
+  const router = useRouter();
 
-const totalTrees = contributions.reduce((s, c) => s + c.qty, 0);
+  useEffect(() => {
+    fetch("/api/user/me").then(res => res.json()).then(data => {
+      if(data.user) setUser(data.user);
+    });
+    fetch("/api/user/orders").then(res => res.json()).then(data => {
+      if(data.data) setOrders(data.data);
+    });
+  }, []);
 
-export default function Dashboard() {
+  const handleLogout = async () => {
+    await fetch("/api/auth/logout", { method: "POST" });
+    router.push("/login");
+  };
+
   return (
-    <div className="flex flex-col md:flex-row min-h-screen">
-      {/* Sidebar */}
-      <aside className="w-full md:w-64 flex-shrink-0 bg-surface border-r border-sand md:sticky md:top-[68px] md:h-[calc(100vh-68px)] overflow-y-auto">
-        <div className="flex flex-col p-6 gap-6">
-          <Link href="/" className="flex items-center gap-2 text-primary font-bold text-sm hover:underline">← Back to Site</Link>
-          <div className="flex items-center gap-3 p-4 rounded-xl bg-cream">
-            <div className="size-12 rounded-full bg-gradient-to-br from-primary to-leaf flex items-center justify-center text-white font-bold text-lg">A</div>
-            <div>
-              <h1 className="text-base font-bold text-forest">Alex Johnson</h1>
-              <p className="text-primary text-xs font-semibold">🏅 Gold Sponsor</p>
-            </div>
-          </div>
-          <nav className="flex flex-col gap-1">
-            {[
-              { emoji: "📊", label: "Impact Reports", active: true },
-              { emoji: "📜", label: "Certificates", active: false },
-              { emoji: "🌳", label: "My Trees", active: false },
-              { emoji: "⚙️", label: "Settings", active: false },
-            ].map((item, i) => (
-              <button key={i} className={`flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium transition-colors text-left ${item.active ? "bg-primary/8 text-primary font-bold" : "text-earth hover:bg-cream hover:text-forest"}`}>
-                <span>{item.emoji}</span> {item.label}
-              </button>
-            ))}
-          </nav>
+    <div className="max-w-7xl mx-auto p-6 pt-32 min-h-[70vh]">
+      <div className="flex flex-col md:flex-row items-center justify-between mb-10 border-b border-sand pb-8 gap-6">
+        <div>
+          <h1 className="text-4xl font-serif font-bold text-forest">My Dashboard</h1>
+          <p className="text-earth font-medium mt-2">Welcome back to your portal, <span className="font-bold text-primary">{user?.name || "Nature Supporter"}</span>.</p>
         </div>
-      </aside>
+        <button onClick={handleLogout} className="px-6 py-3 bg-white border border-sand hover:bg-red-50 hover:border-red-100 hover:text-red-500 rounded-xl font-bold text-forest transition-all shadow-sm flex items-center gap-2">
+          <span>⏏</span> Secure Sign Out
+        </button>
+      </div>
 
-      {/* Main */}
-      <main className="flex-1 bg-cream p-6 md:p-10">
-        <header className="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-8">
-          <div>
-            <h1 className="heading-serif text-3xl font-black text-forest">Your Environmental Legacy</h1>
-            <p className="text-earth mt-1">Track the real-world impact of your contributions.</p>
+      <div className="flex items-center justify-between mb-8">
+        <h2 className="text-2xl font-serif font-bold text-forest flex items-center gap-3">
+          <span className="bg-sand w-10 h-10 rounded-full flex items-center justify-center text-xl">📜</span> 
+          My Validated Certificates
+        </h2>
+        
+        <Link href="/marketplace" className="px-5 py-2.5 bg-forest text-white font-bold rounded-xl hover:bg-primary transition-all text-sm shadow-md">
+          + Sponsor More Trees
+        </Link>
+      </div>
+      
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-20">
+        {orders.length === 0 ? (
+          <div className="col-span-full py-16 text-center bg-white border border-sand rounded-[2rem] shadow-sm">
+            <span className="text-5xl">🌱</span>
+            <p className="font-bold text-forest text-2xl mt-5">No trees sponsored yet</p>
+            <p className="text-earth font-medium mt-1 mb-6">Head over to the marketplace to cast your impact today.</p>
+            <Link href="/marketplace" className="inline-block px-8 py-3.5 bg-gradient-to-r from-accent-dark via-accent to-accent-light text-white font-bold rounded-xl hover:shadow-lg transition-all shadow-md">
+              Enter Marketplace
+            </Link>
           </div>
-          <Link href="/marketplace" className="w-fit h-10 px-6 flex items-center rounded-full bg-gradient-to-r from-accent-dark via-accent to-accent-light text-white text-sm font-bold shadow-md hover:shadow-lg hover:scale-105 active:scale-95 transition-all">🌿 Plant More Trees</Link>
-        </header>
-
-        {/* Stats */}
-        <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-8">
-          {[
-            { emoji: "🌳", title: "Total Trees", val: totalTrees.toString(), sub: "+20 this month" },
-            { emoji: "☁️", title: "CO₂ Offset", val: `${(totalTrees * 0.038).toFixed(1)}t`, sub: "Per year" },
-            { emoji: "💨", title: "O₂ Generated", val: `${(totalTrees * 120).toLocaleString()}L`, sub: "Per year" },
-            { emoji: "📜", title: "Certificates", val: "3", sub: "Available" },
-          ].map((s, i) => (
-            <div key={i} className="flex flex-col gap-2 rounded-2xl p-5 bg-surface border border-sand shadow-sm hover:shadow-md hover:border-primary/15 transition-all group hover:-translate-y-1">
-              <span className="text-xl group-hover:scale-110 transition-transform">{s.emoji}</span>
-              <p className="text-2xl font-black text-forest heading-serif">{s.val}</p>
-              <p className="text-[10px] text-earth font-semibold uppercase tracking-wider">{s.title}</p>
-              <p className="text-[10px] text-earth/60">{s.sub}</p>
-            </div>
-          ))}
-        </div>
-
-        {/* Charts */}
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-5 mb-8">
-          <div className="lg:col-span-2 bg-surface rounded-2xl border border-sand p-6 shadow-sm">
-            <h2 className="heading-serif text-lg font-bold text-forest mb-6">Monthly Activity</h2>
-            <div className="flex items-end gap-2 h-40">
-              {[
-                { m: "Aug", h: 30 }, { m: "Sep", h: 20 }, { m: "Oct", h: 45 },
-                { m: "Nov", h: 65 }, { m: "Dec", h: 25 }, { m: "Jan", h: 50 },
-                { m: "Feb", h: 75 }, { m: "Mar", h: 40 },
-              ].map((b, i) => (
-                <div key={i} className="flex-1 flex flex-col items-center gap-2">
-                  <div className="w-full rounded-t-lg bg-gradient-to-t from-primary to-leaf transition-all duration-500 hover:opacity-80 cursor-pointer" style={{ height: `${b.h}%` }}></div>
-                  <span className="text-[9px] text-earth font-semibold">{b.m}</span>
-                </div>
-              ))}
-            </div>
-          </div>
-          <div className="bg-surface rounded-2xl border border-sand p-6 shadow-sm">
-            <h2 className="heading-serif text-lg font-bold text-forest mb-6">Species Mix</h2>
-            <div className="space-y-4">
-              {[
-                { name: "Mango", pct: 30, color: "bg-primary" },
-                { name: "Neem", pct: 25, color: "bg-leaf" },
-                { name: "Mangrove", pct: 20, color: "bg-accent" },
-                { name: "Banyan", pct: 15, color: "bg-moss" },
-                { name: "Others", pct: 10, color: "bg-sage" },
-              ].map((s, i) => (
-                <div key={i} className="space-y-1">
-                  <div className="flex justify-between text-sm"><span className="text-earth font-medium">{s.name}</span><span className="text-earth/60">{s.pct}%</span></div>
-                  <div className="w-full h-2 bg-cream-dark rounded-full overflow-hidden">
-                    <div className={`h-full ${s.color} rounded-full anim-progress`} style={{ width: `${s.pct}%` }}></div>
-                  </div>
-                </div>
-              ))}
-            </div>
-          </div>
-        </div>
-
-        {/* Table */}
-        <h2 className="heading-serif text-lg font-bold text-forest mb-4">My Contributions</h2>
-        <div className="bg-surface rounded-2xl border border-sand overflow-hidden shadow-sm mb-8">
-          <div className="overflow-x-auto">
-            <table className="w-full text-left">
-              <thead className="bg-cream">
-                <tr>
-                  {["Project", "Date", "Trees", "Species", "Status"].map((h) => (
-                    <th key={h} className="p-4 text-[10px] font-bold uppercase text-earth tracking-wider">{h}</th>
-                  ))}
-                </tr>
-              </thead>
-              <tbody className="divide-y divide-cream-dark">
-                {contributions.map((c, i) => (
-                  <tr key={i} className="hover:bg-cream/50 transition-colors">
-                    <td className="p-4 text-sm font-semibold text-forest">{c.project}</td>
-                    <td className="p-4 text-sm text-earth">{c.date}</td>
-                    <td className="p-4 text-sm font-bold text-forest">{c.qty}</td>
-                    <td className="p-4 text-sm text-earth">{c.species}</td>
-                    <td className="p-4"><span className={`px-2.5 py-1 rounded-full text-[11px] font-bold ${c.status === "Growing" ? "bg-primary/10 text-primary" : "bg-accent/15 text-accent-dark"}`}>{c.status}</span></td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
-          </div>
-        </div>
-
-        {/* Certificates */}
-        <h2 className="heading-serif text-lg font-bold text-forest mb-4">Certificates</h2>
-        <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
-          {[
-            { id: "CERT-001", date: "Feb 15, 2026", trees: 25, project: "Green Karnataka" },
-            { id: "CERT-002", date: "Jan 12, 2026", trees: 12, project: "Reforest Aravali" },
-            { id: "CERT-003", date: "Nov 8, 2025", trees: 50, project: "Sundarbans" },
-          ].map((cert, i) => (
-            <div key={i} className="bg-surface rounded-2xl border border-sand p-5 shadow-sm hover:shadow-lg hover:border-accent/20 transition-all group hover:-translate-y-1">
-              <div className="flex items-center gap-3 mb-3">
-                <span className="text-2xl">🏆</span>
+        ) : (
+          orders.map((o: any) => (
+            <div key={o._id} className="bg-white p-7 rounded-3xl border border-sand shadow-lg shadow-forest/5 flex flex-col h-full relative overflow-hidden group hover:border-primary/30 transition-all">
+              <div className="absolute top-0 left-0 w-1.5 h-full bg-gradient-to-b from-primary to-accent group-hover:w-2 transition-all"></div>
+              
+              <div className="flex justify-between items-start mb-5 pl-2">
                 <div>
-                  <p className="text-sm font-bold text-forest">{cert.id}</p>
-                  <p className="text-[10px] text-earth">{cert.date}</p>
+                   <span className="text-[10px] uppercase tracking-widest font-bold text-earth block mb-0.5">Order Code</span>
+                   <span className="font-mono text-sm font-bold text-bark">{o.razorpayOrderId.slice(-8)}</span>
+                </div>
+                <span className={`px-4 py-1.5 text-[11px] font-bold uppercase tracking-wider rounded-full ${o.paymentStatus === 'Completed' ? 'bg-[#34d399]/10 text-forest' : 'bg-amber-100 text-amber-700'}`}>
+                  {o.paymentStatus}
+                </span>
+              </div>
+              
+              <div className="flex-1 pl-2">
+                <p className="text-[15px] font-bold text-forest mb-4 leading-relaxed">
+                  {o.trees.map((t: any) => `${t.quantity}x ${t.name}`).join(' • ')}
+                </p>
+                <div className="my-5 pt-5 border-t border-sand">
+                  <p className="text-[11px] text-earth uppercase font-bold tracking-widest mb-1.5">Contribution Total</p>
+                  <p className="text-3xl font-black text-forest">₹{o.totalAmount}</p>
                 </div>
               </div>
-              <p className="text-sm text-earth mb-3">{cert.trees} trees — {cert.project}</p>
-              <button className="w-full flex items-center justify-center gap-2 py-2.5 rounded-xl border border-sand text-sm font-bold text-earth hover:border-primary hover:text-primary transition-colors">
-                📥 Download
-              </button>
+
+              <div className="mt-5 pl-2">
+                {o.certificateValidated ? (
+                  <button className="w-full flex items-center justify-center gap-2 bg-gradient-to-r from-accent-dark via-accent to-accent-light text-white font-bold py-3.5 rounded-xl hover:shadow-xl hover:shadow-accent/20 hover:scale-[1.02] transition-all">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="7 10 12 15 17 10"></polyline><line x1="12" y1="15" x2="12" y2="3"></line></svg>
+                    Download Digital Copy
+                  </button>
+                ) : (
+                  <div className="flex items-center justify-center gap-2 w-full py-3.5 rounded-xl bg-sand/40 text-earth font-bold text-sm border border-sand">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="12" r="10"></circle><polyline points="12 6 12 12 16 14"></polyline></svg>
+                    Awaiting Validation
+                  </div>
+                )}
+              </div>
             </div>
-          ))}
-        </div>
-      </main>
+          ))
+        )}
+      </div>
     </div>
   );
 }

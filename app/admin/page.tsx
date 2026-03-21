@@ -1,150 +1,226 @@
 "use client";
 
-import Link from "next/link";
-import { useState } from "react";
+import { useState, useEffect } from "react";
+import { useRouter } from "next/navigation";
 
-const orders = [
-  { id: "#ORD-7821", customer: "Priya Sharma", trees: 10, species: "Mango", amount: "₹2,990", status: "Pending", date: "Mar 20" },
-  { id: "#ORD-7822", customer: "Rahul Verma", trees: 25, species: "Neem", amount: "₹4,475", date: "Mar 19", status: "In Progress" },
-  { id: "#ORD-7823", customer: "TechCorp CSR", trees: 500, species: "Mixed", amount: "₹1,49,500", date: "Mar 18", status: "In Progress" },
-  { id: "#ORD-7824", customer: "Anita Krishnan", trees: 5, species: "Banyan", amount: "₹2,695", date: "Mar 17", status: "Completed" },
-  { id: "#ORD-7825", customer: "Vikram Singh", trees: 15, species: "Peepal", amount: "₹7,185", date: "Mar 16", status: "Planted" },
-  { id: "#ORD-7826", customer: "GreenFood Co.", trees: 200, species: "Fruit", amount: "₹54,800", date: "Mar 15", status: "Planted" },
-];
+export default function AdminPanel() {
+  const [activeTab, setActiveTab] = useState("trees");
+  const [data, setData] = useState<any>({ trees: [], projects: [], orders: [] });
+  const router = useRouter();
 
-const statusColors: Record<string, string> = {
-  Pending: "bg-amber-100 text-amber-700",
-  "In Progress": "bg-blue-100 text-blue-700",
-  Completed: "bg-emerald-100 text-emerald-700",
-  Planted: "bg-primary/10 text-primary",
-};
+  useEffect(() => {
+    fetchData();
+  }, [activeTab]);
 
-export default function Admin() {
-  const [activeNav, setActiveNav] = useState("Dashboard");
-  const [selected, setSelected] = useState<string[]>([]);
+  const fetchData = async () => {
+    try {
+      const res = await fetch(`/api/admin/${activeTab}`, { cache: "no-store" });
+      const json = await res.json();
+      setData((prev: any) => ({ ...prev, [activeTab]: json.data || [] }));
+    } catch(e) {}
+  };
 
-  const toggle = (id: string) => setSelected((p) => p.includes(id) ? p.filter((x) => x !== id) : [...p, id]);
+  const handleLogout = async () => {
+    await fetch("/api/auth/logout", { method: "POST" });
+    router.push("/login");
+  };
+
+  const [newTree, setNewTree] = useState({ name: "", price: "", type: "", img: "" });
+  const handleAddTree = async (e: React.FormEvent) => {
+    e.preventDefault();
+    await fetch("/api/admin/trees", { 
+      method: "POST", 
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(newTree) 
+    });
+    setNewTree({ name: "", price: "", type: "", img: "" });
+    fetchData();
+  };
+
+  const [newProject, setNewProject] = useState({ title: "", description: "", location: "", targetTrees: "" });
+  const handleAddProject = async (e: React.FormEvent) => {
+    e.preventDefault();
+    await fetch("/api/admin/projects", { 
+      method: "POST", 
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ ...newProject, targetTrees: Number(newProject.targetTrees) || 100 }) 
+    });
+    setNewProject({ title: "", description: "", location: "", targetTrees: "" });
+    fetchData();
+  };
+
+  const handleUpdateProjectTrees = async (projectId: string, amount: number) => {
+    if (!amount || isNaN(amount) || amount <= 0) return;
+    await fetch("/api/admin/projects", {
+      method: "PUT",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ projectId, action: "addTrees", amount })
+    });
+    fetchData();
+  };
+
+  const handleDeleteItem = async (type: "trees" | "projects", id: string) => {
+    if (confirm(`Are you sure you want to delete this ${type === "trees" ? "tree" : "project"}?`)) {
+      await fetch(`/api/admin/${type}`, {
+        method: "DELETE",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ id })
+      });
+      fetchData();
+    }
+  };
+
+  const validateOrder = async (orderId: string) => {
+    await fetch("/api/admin/orders", { 
+      method: "PUT", 
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ orderId, validated: true }) 
+    });
+    fetchData();
+  };
 
   return (
-    <div className="flex min-h-screen">
-      {/* Sidebar */}
-      <aside className="w-64 bg-surface border-r border-sand flex-shrink-0 hidden md:flex flex-col justify-between sticky top-[68px] h-[calc(100vh-68px)]">
-        <div className="p-6 flex flex-col gap-6">
-          <Link href="/" className="flex items-center gap-2 text-primary font-bold text-sm hover:underline">← Back to Site</Link>
-          <div>
-            <h1 className="heading-serif font-bold text-lg text-forest">Admin Panel</h1>
-            <p className="text-xs text-earth">Plantation Management</p>
-          </div>
-          <nav className="flex flex-col gap-1">
-            {[
-              { emoji: "📊", label: "Dashboard" },
-              { emoji: "📋", label: "Orders" },
-              { emoji: "🌳", label: "Projects" },
-              { emoji: "👥", label: "Donors" },
-              { emoji: "📈", label: "Reports" },
-              { emoji: "⚙️", label: "Settings" },
-            ].map((item, i) => (
-              <button key={i} onClick={() => setActiveNav(item.label)} className={`flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium transition-all text-left ${activeNav === item.label ? "bg-primary/8 text-primary font-bold" : "text-earth hover:bg-cream hover:text-forest"}`}>
-                <span>{item.emoji}</span> {item.label}
-              </button>
-            ))}
-          </nav>
-        </div>
-        <div className="p-6 border-t border-sand">
-          <div className="flex items-center gap-3">
-            <div className="size-9 rounded-full bg-gradient-to-br from-primary to-leaf flex items-center justify-center text-white font-bold text-sm">A</div>
-            <div>
-              <p className="text-sm font-bold text-forest">Admin</p>
-              <p className="text-[10px] text-earth">Super Admin</p>
-            </div>
-          </div>
-        </div>
+    <div className="flex bg-cream min-h-screen">
+      <aside className="w-64 bg-forest text-white flex flex-col pt-[88px] px-4 shadow-xl z-[40]">
+        <h2 className="text-xl font-serif font-bold mb-8 px-2 tracking-wide text-sand">Administrator Panel</h2>
+        <nav className="flex flex-col gap-2 flex-1">
+          <button onClick={() => setActiveTab("trees")} className={`text-left px-5 py-3.5 rounded-xl transition-all font-medium flex items-center gap-3 ${activeTab === 'trees' ? 'bg-primary text-white shadow-md' : 'text-sand hover:bg-white/10'}`}>
+            <span className="text-xl">🌿</span> Manage Trees
+          </button>
+          <button onClick={() => setActiveTab("projects")} className={`text-left px-5 py-3.5 rounded-xl transition-all font-medium flex items-center gap-3 ${activeTab === 'projects' ? 'bg-primary text-white shadow-md' : 'text-sand hover:bg-white/10'}`}>
+            <span className="text-xl">🌍</span> CSR Projects
+          </button>
+          <button onClick={() => setActiveTab("orders")} className={`text-left px-5 py-3.5 rounded-xl transition-all font-medium flex items-center gap-3 ${activeTab === 'orders' ? 'bg-primary text-white shadow-md' : 'text-sand hover:bg-white/10'}`}>
+            <span className="text-xl">📜</span> Validations
+          </button>
+        </nav>
+        <button onClick={handleLogout} className="mb-8 px-5 py-3.5 hover:ring-2 ring-red-500/50 bg-red-500/20 text-red-100 font-bold rounded-xl transition-all flex items-center gap-2">
+          <span>⏏</span> Secure Logout
+        </button>
       </aside>
 
-      {/* Main */}
-      <main className="flex-1 p-6 md:p-8 bg-cream">
-        <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-8">
-          <div>
-            <h1 className="heading-serif text-3xl font-black text-forest">Plantation Queue</h1>
-            <p className="text-earth text-sm mt-1">Manage orders and track progress</p>
-          </div>
-          <div className="flex gap-3">
-            <button className="h-10 px-5 flex items-center gap-2 rounded-full border border-sand bg-surface text-sm font-bold text-earth hover:border-primary hover:text-primary transition-colors">📥 Export</button>
-            <button className="h-10 px-5 flex items-center gap-2 rounded-full bg-gradient-to-r from-accent-dark via-accent to-accent-light text-white text-sm font-bold shadow-md hover:shadow-lg hover:scale-105 active:scale-95 transition-all">+ Add Order</button>
-          </div>
-        </div>
-
-        {/* Stats */}
-        <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-8">
-          {[
-            { emoji: "⏳", label: "Pending", value: "1,245" },
-            { emoji: "🔄", label: "In Progress", value: "430" },
-            { emoji: "✅", label: "Planted", value: "11,250" },
-            { emoji: "💰", label: "Revenue", value: "₹2.2L" },
-          ].map((s, i) => (
-            <div key={i} className="flex items-center gap-4 p-5 rounded-2xl bg-surface border border-sand shadow-sm hover:shadow-md transition-all group hover:-translate-y-1">
-              <span className="text-2xl group-hover:scale-110 transition-transform">{s.emoji}</span>
-              <div>
-                <p className="text-[10px] font-semibold text-earth uppercase tracking-wider">{s.label}</p>
-                <p className="text-xl font-black text-forest heading-serif">{s.value}</p>
-              </div>
-            </div>
-          ))}
-        </div>
-
-        {selected.length > 0 && (
-          <div className="mb-4 flex items-center gap-3 p-4 rounded-xl bg-primary/5 border border-primary/15">
-            <span className="text-sm font-bold text-primary">{selected.length} selected</span>
-            <button className="ml-auto px-4 py-2 rounded-full bg-primary text-white text-sm font-bold hover:bg-primary-dark transition-colors">Mark as Planted</button>
-          </div>
-        )}
-
-        {/* Table */}
-        <div className="bg-surface rounded-2xl border border-sand overflow-hidden shadow-sm">
-          <div className="p-4 flex items-center justify-between border-b border-cream-dark">
-            <h2 className="font-bold text-forest">Recent Orders</h2>
-            <div className="flex gap-1">
-              {["All", "Pending", "In Progress", "Planted"].map((f) => (
-                <button key={f} className="px-3 py-1.5 rounded-full text-[11px] font-bold text-earth hover:bg-primary/5 hover:text-primary transition-colors">{f}</button>
+      <main className="flex-1 p-10 pt-32 overflow-y-auto">
+        <h1 className="text-4xl font-serif font-bold text-forest mb-1 capitalize border-b border-sand pb-4">{activeTab} Management</h1>
+        <p className="text-earth text-sm font-medium mb-10">Make dynamic changes directly to the MongoDB backend clusters payload.</p>
+        
+        {activeTab === "trees" && (
+          <div className="flex flex-col lg:flex-row gap-8 items-start">
+            <form onSubmit={handleAddTree} className="bg-white p-7 rounded-[2rem] shadow-xl shadow-forest/5 border border-sand w-full lg:w-1/3 flex flex-col gap-4">
+              <h3 className="font-bold text-forest text-lg border-b border-sand pb-3 mb-1">Add New Tree Listing</h3>
+              <input placeholder="Ex: Alphonso Mango Tree" required value={newTree.name} onChange={e => setNewTree({...newTree, name: e.target.value})} className="border rounded-xl px-4 py-2.5 w-full outline-none focus:border-primary focus:ring-1 focus:ring-primary/20 bg-cream" />
+              <input placeholder="Monthly Price (INR)" type="number" required value={newTree.price} onChange={e => setNewTree({...newTree, price: e.target.value})} className="border rounded-xl px-4 py-2.5 w-full outline-none focus:border-primary focus:ring-1 focus:ring-primary/20 bg-cream" />
+              <input placeholder="Type (e.g., Fruit Bearing)" required value={newTree.type} onChange={e => setNewTree({...newTree, type: e.target.value})} className="border rounded-xl px-4 py-2.5 w-full outline-none focus:border-primary focus:ring-1 focus:ring-primary/20 bg-cream" />
+              <input placeholder="Image URL (e.g., /amla.jpg)" required value={newTree.img} onChange={e => setNewTree({...newTree, img: e.target.value})} className="border rounded-xl px-4 py-2.5 w-full outline-none focus:border-primary focus:ring-1 focus:ring-primary/20 bg-cream" />
+              <button className="bg-forest mt-2 text-white font-bold py-3.5 rounded-xl hover:bg-primary transition-colors shadow-md">Deploy to Marketplace</button>
+            </form>
+            <div className="w-full lg:w-2/3 flex flex-col gap-3">
+              {data.trees.map((t: any) => (
+                <div key={t._id} className="bg-white p-4 pr-6 rounded-2xl border border-sand flex items-center justify-between shadow-sm hover:shadow-md transition-all group">
+                  <div className="flex items-center gap-5">
+                    <img src={t.img} className="w-16 h-16 rounded-xl object-cover border border-sand shadow-inner" />
+                    <div>
+                      <p className="font-bold text-forest text-lg">{t.name}</p>
+                      <p className="text-[13px] font-semibold text-primary">{t.type} <span className="text-earth mx-2">•</span> <span className="text-bark">₹{t.price} / mo</span></p>
+                    </div>
+                  </div>
+                  <button onClick={() => handleDeleteItem("trees", t._id)} className="text-[10px] uppercase font-bold text-red-500 px-3 py-1 bg-red-50 rounded-md hover:bg-red-500 hover:text-white transition-colors border border-red-100 shadow-sm">Delete</button>
+                </div>
               ))}
             </div>
           </div>
-          <div className="overflow-x-auto">
-            <table className="w-full text-left">
-              <thead className="bg-cream border-b border-cream-dark">
-                <tr>
-                  <th className="px-4 py-3 w-10"><input type="checkbox" className="rounded border-sage accent-primary" /></th>
-                  {["Order", "Customer", "Trees", "Species", "Amount", "Date", "Status", ""].map((h) => (
-                    <th key={h} className="px-4 py-3 text-[10px] font-bold text-earth uppercase tracking-wider">{h}</th>
-                  ))}
-                </tr>
-              </thead>
-              <tbody className="divide-y divide-cream-dark">
-                {orders.map((o) => (
-                  <tr key={o.id} className="hover:bg-cream/50 transition-colors">
-                    <td className="px-4 py-3"><input type="checkbox" className="rounded border-sage accent-primary" checked={selected.includes(o.id)} onChange={() => toggle(o.id)} /></td>
-                    <td className="px-4 py-3 font-mono text-sm font-bold text-forest">{o.id}</td>
-                    <td className="px-4 py-3 text-sm font-medium text-forest">{o.customer}</td>
-                    <td className="px-4 py-3 text-sm font-bold text-forest">{o.trees}</td>
-                    <td className="px-4 py-3 text-sm text-earth">{o.species}</td>
-                    <td className="px-4 py-3 text-sm font-bold text-forest">{o.amount}</td>
-                    <td className="px-4 py-3 text-sm text-earth">{o.date}</td>
-                    <td className="px-4 py-3"><span className={`px-2.5 py-1 rounded-full text-[11px] font-bold ${statusColors[o.status] || "bg-gray-100 text-gray-600"}`}>{o.status}</span></td>
-                    <td className="px-4 py-3"><button className="text-earth hover:text-primary transition-colors">⋮</button></td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
-          </div>
-          <div className="p-4 border-t border-cream-dark flex items-center justify-between text-sm text-earth">
-            <span>{orders.length} orders</span>
-            <div className="flex gap-2">
-              <button className="px-3 py-1.5 rounded-full border border-sand text-[11px] font-bold hover:border-primary hover:text-primary transition-colors">← Prev</button>
-              <button className="px-3 py-1.5 rounded-full bg-primary text-white text-[11px] font-bold">1</button>
-              <button className="px-3 py-1.5 rounded-full border border-sand text-[11px] font-bold hover:border-primary hover:text-primary transition-colors">Next →</button>
+        )}
+
+        {activeTab === "projects" && (
+          <div className="flex flex-col lg:flex-row gap-8 items-start">
+            <form onSubmit={handleAddProject} className="bg-white p-7 rounded-[2rem] shadow-xl shadow-forest/5 border border-sand w-full lg:w-1/3 flex flex-col gap-4">
+              <h3 className="font-bold text-forest text-lg border-b border-sand pb-3 mb-1">Create CSR Project</h3>
+              <input placeholder="Project Title" required value={newProject.title} onChange={e => setNewProject({...newProject, title: e.target.value})} className="border rounded-xl px-4 py-2.5 w-full outline-none focus:border-primary focus:ring-1 focus:ring-primary/20 bg-cream" />
+              <input placeholder="Location Region" required value={newProject.location} onChange={e => setNewProject({...newProject, location: e.target.value})} className="border rounded-xl px-4 py-2.5 w-full outline-none focus:border-primary focus:ring-1 focus:ring-primary/20 bg-cream" />
+              <input placeholder="Target Number of Trees" type="number" required value={newProject.targetTrees} onChange={e => setNewProject({...newProject, targetTrees: e.target.value})} className="border rounded-xl px-4 py-2.5 w-full outline-none focus:border-primary focus:ring-1 focus:ring-primary/20 bg-cream" />
+              <textarea placeholder="Detailed Description" required value={newProject.description} onChange={e => setNewProject({...newProject, description: e.target.value})} className="border rounded-xl px-4 py-2.5 w-full outline-none focus:border-primary focus:ring-1 focus:ring-primary/20 bg-cream h-28 resize-none" />
+              <button className="bg-forest mt-2 text-white font-bold py-3.5 rounded-xl hover:bg-primary transition-colors shadow-md">Establish Project</button>
+            </form>
+            <div className="w-full lg:w-2/3 grid grid-cols-1 md:grid-cols-2 gap-4">
+              {data.projects.map((p: any) => (
+                <div key={p._id} className="bg-white p-6 justify-between rounded-3xl border border-sand shadow-sm hover:-translate-y-1 transition-transform cursor-default flex flex-col">
+                  <div>
+                    <div className="flex justify-between items-start mb-2">
+                      <p className="font-bold text-forest text-lg leading-tight w-2/3">{p.title}</p>
+                      <button onClick={() => handleDeleteItem("projects", p._id)} className="text-[10px] uppercase font-bold text-red-500 px-3 py-1 bg-red-50 rounded-full hover:bg-red-500 hover:text-white transition-colors border border-red-100 shadow-sm">Delete</button>
+                    </div>
+                    <p className="text-xs font-semibold text-earth flex items-center gap-1 mb-3"><span className="text-primary">📍</span> {p.location}</p>
+                    <p className="text-[13px] text-bark leading-relaxed mb-4">{p.description}</p>
+                  </div>
+                  
+                  <div className="mt-auto border-t border-sand pt-4">
+                    <div className="flex justify-between text-xs font-bold text-earth mb-1">
+                      <span>{p.treesPlanted || 0} Trees Planted</span>
+                      <span>Target: {p.targetTrees || 100}</span>
+                    </div>
+                    <div className="w-full bg-cream rounded-full h-2.5 mb-4 overflow-hidden border border-sand">
+                      <div className="bg-primary h-full rounded-full transition-all duration-500" style={{ width: `${Math.min(100, ((p.treesPlanted || 0) / (p.targetTrees || 100)) * 100)}%` }}></div>
+                    </div>
+                    <div className="flex items-center gap-2">
+                      <input type="number" id={`treeCount-${p._id}`} placeholder="Qty" className="w-16 border border-sand rounded-xl px-3 py-2 text-sm outline-none bg-cream focus:border-primary focus:ring-1 focus:ring-primary/20 font-bold text-forest" />
+                      <button 
+                        onClick={() => {
+                          const input = document.getElementById(`treeCount-${p._id}`) as HTMLInputElement;
+                          if (input && input.value) {
+                            handleUpdateProjectTrees(p._id, parseInt(input.value));
+                            input.value = "";
+                          }
+                        }}
+                        className="bg-forest text-white px-4 py-2 rounded-xl font-bold text-xs hover:bg-primary transition-colors flex-1 shadow-md"
+                      >
+                        + Add Trees
+                      </button>
+                    </div>
+                  </div>
+                </div>
+              ))}
             </div>
           </div>
-        </div>
+        )}
+
+        {activeTab === "orders" && (
+          <div className="flex flex-col gap-4 w-full lg:w-[80%]">
+             {data.orders.map((o: any) => (
+                <div key={o._id} className="bg-white p-6 rounded-[2rem] border border-sand shadow-sm flex flex-col md:flex-row items-start md:items-center justify-between gap-6 hover:border-primary/30 transition-colors">
+                  <div className="flex-1">
+                    <div className="flex items-center gap-3 mb-2">
+                       <p className="font-bold text-forest text-lg">Razorpay Checkout</p>
+                       <span className="font-mono text-xs bg-sand text-earth px-2 py-0.5 rounded-md">{o.razorpayOrderId}</span>
+                    </div>
+                    
+                    <p className="text-[13px] text-bark font-medium mb-3">Trees: <span className="text-forest font-bold">{o.trees.map((t: any) => `${t.quantity}x ${t.name}`).join(', ')}</span></p>
+                    
+                    <div className="flex items-center gap-4 text-xs font-bold uppercase tracking-wider">
+                      <span className="text-forest flex items-center gap-1"><span className="text-[15px]">💰</span> ₹{o.totalAmount}</span>
+                      <span className={`flex items-center gap-1 ${o.paymentStatus === 'Completed' ? 'text-green-600' : 'text-amber-500'}`}><span className="text-[15px]">🔒</span> {o.paymentStatus}</span>
+                    </div>
+                  </div>
+                  <div className="w-full md:w-auto mt-4 md:mt-0">
+                    {!o.certificateValidated ? (
+                      <button onClick={() => validateOrder(o._id)} className="w-full md:w-auto bg-primary hover:bg-forest text-white font-bold py-3.5 px-8 rounded-2xl transition-all shadow-md shadow-primary/20 hover:scale-[1.02]">
+                        Generate & Validate Certificate
+                      </button>
+                    ) : (
+                      <span className="w-full md:w-auto flex items-center justify-center gap-2 text-primary font-bold bg-primary/10 border border-primary/20 px-8 py-3.5 rounded-2xl">
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path><polyline points="22 4 12 14.01 9 11.01"></polyline></svg>
+                        Validated
+                      </span>
+                    )}
+                  </div>
+                </div>
+              ))}
+              {data.orders.length === 0 && (
+                <div className="text-center py-20 bg-white border border-sand rounded-3xl">
+                  <span className="text-4xl">📭</span>
+                  <p className="font-bold text-forest mt-4">No tree orders in the database.</p>
+                </div>
+              )}
+          </div>
+        )}
       </main>
     </div>
   );

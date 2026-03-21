@@ -14,6 +14,14 @@ export default function CartSidebar() {
     if (cartItems.length === 0) return;
     setProcessing(true);
     try {
+      // Enforce Login Gate
+      const meRes = await fetch("/api/user/me");
+      if (!meRes.ok) {
+        alert("You must be logged in to sponsor trees and receive your digital certificate.");
+        window.location.href = "/login";
+        return;
+      }
+
       const res = await fetch("/api/razorpay/create-order", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
@@ -35,7 +43,11 @@ export default function CartSidebar() {
             const verifyRes = await fetch("/api/razorpay/verify", {
               method: "POST",
               headers: { "Content-Type": "application/json" },
-              body: JSON.stringify(response),
+              body: JSON.stringify({
+                ...response,
+                trees: cartItems.map(item => ({ treeId: String(item.id), name: item.name, quantity: item.quantity, price: item.price })),
+                totalAmount: total
+              }),
             });
             const verifyData = await verifyRes.json();
             if (verifyData.success) {

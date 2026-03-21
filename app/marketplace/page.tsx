@@ -6,7 +6,7 @@ import TreeInfoPopup from "../../components/TreeInfoPopup";
 import { useCart } from "../../components/CartProvider";
 
 interface Tree {
-  id: number;
+  id: string | number;
   name: string;
   price: number;
   type: string;
@@ -18,9 +18,9 @@ export default function Marketplace() {
   const [loading, setLoading] = useState(true);
   const [activeFilters, setActiveFilters] = useState<string[]>(["Fruit Bearing", "Medicinal", "Shade Giving"]);
   const [sortBy, setSortBy] = useState("recommended");
-  const [quantities, setQuantities] = useState<Record<number, number>>({});
+  const [quantities, setQuantities] = useState<Record<string, number>>({});
   const [selectedTree, setSelectedTree] = useState<string | null>(null);
-  const [addedId, setAddedId] = useState<number | null>(null);
+  const [addedId, setAddedId] = useState<string | number | null>(null);
   const { addToCart } = useCart();
 
   const handleAddToCart = (tree: Tree) => {
@@ -78,10 +78,10 @@ export default function Marketplace() {
       return 0;
     });
 
-  const updateQty = (id: number, delta: number) =>
+  const updateQty = (id: string | number, delta: number) =>
     setQuantities((prev) => ({ ...prev, [id]: Math.max(1, (prev[id] || 1) + delta) }));
 
-  const handleAdd = (id: number) => {
+  const handleAdd = (id: string | number) => {
     setAddedId(id);
     setTimeout(() => setAddedId(null), 2000);
   };

@@ -31,6 +31,14 @@ export default function Navigation() {
   const { cartItems, setIsCartOpen } = useCart();
   const totalItems = cartItems.reduce((acc, item) => acc + item.quantity, 0);
   const [scrolled, setScrolled] = useState(false);
+  const [user, setUser] = useState<any>(null);
+
+  useEffect(() => {
+    fetch("/api/user/me").then(r => r.json()).then(d => {
+      if (d.user) setUser(d.user);
+      else setUser(null);
+    }).catch(() => setUser(null));
+  }, [pathname]);
 
   useEffect(() => {
     const handleScroll = () => setScrolled(window.scrollY > 20);
@@ -99,6 +107,23 @@ export default function Navigation() {
             )}
           </button>
           
+          {/* Auth Button */}
+          {user ? (
+            <Link 
+              href={user.role === "admin" ? "/admin" : "/dashboard"}
+              className="hidden lg:flex items-center gap-2 px-5 py-2 rounded-full bg-primary/10 border border-primary/20 text-forest text-sm font-bold hover:bg-primary/20 transition-colors shadow-sm"
+            >
+              <span className="text-primary text-lg">👤</span> {user.role === "admin" ? "Admin Panel" : "My Dashboard"}
+            </Link>
+          ) : (
+            <Link 
+              href="/login"
+              className="hidden lg:flex items-center gap-2 px-5 py-2 rounded-full bg-white border border-sand text-forest text-sm font-bold hover:bg-cream transition-colors shadow-sm"
+            >
+              Sign In
+            </Link>
+          )}
+
           {/* Gold accent donate button */}
           <Link
             href="/marketplace"
@@ -163,6 +188,14 @@ export default function Navigation() {
           >
             🛒 View Cart {totalItems > 0 ? `(${totalItems} items)` : ""}
           </button>
+          
+          <Link
+            href={user ? (user.role === "admin" ? "/admin" : "/dashboard") : "/login"}
+            className="text-[14px] font-semibold px-4 py-3.5 rounded-xl transition-all text-left text-bark/70 hover:text-primary hover:bg-primary/5 flex items-center gap-2"
+          >
+            👤 {user ? "My Dashboard" : "Sign In"}
+          </Link>
+          
           <Link
             href="/marketplace"
             className="mt-3 h-12 flex items-center justify-center rounded-full bg-gradient-to-r from-accent-dark via-accent to-accent-light text-[14px] font-bold text-white shadow-md"
