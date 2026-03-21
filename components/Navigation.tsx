@@ -23,9 +23,13 @@ const LeafLogo = () => (
   </svg>
 );
 
+import { useCart } from "./CartProvider";
+
 export default function Navigation() {
   const pathname = usePathname();
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+  const { cartItems, setIsCartOpen } = useCart();
+  const totalItems = cartItems.reduce((acc, item) => acc + item.quantity, 0);
   const [scrolled, setScrolled] = useState(false);
 
   useEffect(() => {
@@ -82,7 +86,19 @@ export default function Navigation() {
         </nav>
 
         {/* Right Side */}
-        <div className="flex items-center gap-3">
+        <div className="flex items-center gap-2 sm:gap-4">
+          <button 
+            onClick={() => setIsCartOpen(true)}
+            className="relative flex items-center justify-center size-10 rounded-full bg-sand text-forest hover:bg-[#eae5d8] transition-colors"
+          >
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><circle cx="9" cy="21" r="1"></circle><circle cx="20" cy="21" r="1"></circle><path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"></path></svg>
+            {totalItems > 0 && (
+              <span className="absolute -top-1 -right-1 flex h-4 w-4 items-center justify-center rounded-full bg-accent text-[9px] font-bold text-white">
+                {totalItems}
+              </span>
+            )}
+          </button>
+          
           {/* Gold accent donate button */}
           <Link
             href="/marketplace"
@@ -141,6 +157,12 @@ export default function Navigation() {
               </Link>
             );
           })}
+          <button
+            onClick={() => setIsCartOpen(true)}
+            className="mt-2 text-[14px] font-semibold px-4 py-3.5 rounded-xl transition-all text-left text-bark/70 hover:text-primary hover:bg-primary/5 flex items-center gap-2"
+          >
+            🛒 View Cart {totalItems > 0 ? `(${totalItems} items)` : ""}
+          </button>
           <Link
             href="/marketplace"
             className="mt-3 h-12 flex items-center justify-center rounded-full bg-gradient-to-r from-accent-dark via-accent to-accent-light text-[14px] font-bold text-white shadow-md"

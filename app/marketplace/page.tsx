@@ -3,6 +3,7 @@
 import { useEffect, useState } from "react";
 import Link from "next/link";
 import TreeInfoPopup from "../../components/TreeInfoPopup";
+import { useCart } from "../../components/CartProvider";
 
 interface Tree {
   id: number;
@@ -18,8 +19,17 @@ export default function Marketplace() {
   const [activeFilters, setActiveFilters] = useState<string[]>(["Fruit Bearing", "Medicinal", "Shade Giving"]);
   const [sortBy, setSortBy] = useState("recommended");
   const [quantities, setQuantities] = useState<Record<number, number>>({});
-  const [addedId, setAddedId] = useState<number | null>(null);
   const [selectedTree, setSelectedTree] = useState<string | null>(null);
+  const [addedId, setAddedId] = useState<number | null>(null);
+  const { addToCart } = useCart();
+
+  const handleAddToCart = (tree: Tree) => {
+    const qty = quantities[tree.id] || 1;
+    // Map backend response 'price' directly adjusting to the 12-month value the front-end has been charging
+    addToCart({ id: tree.id, name: tree.name, img: tree.img, price: tree.price * 12 }, qty);
+    setAddedId(tree.id);
+    setTimeout(() => setAddedId(null), 1500);
+  };
 
   useEffect(() => {
     async function fetchTrees() {
@@ -246,14 +256,17 @@ export default function Marketplace() {
 
                     <div className="mt-auto flex flex-col gap-2">
                       <button
-                        onClick={() => handleAdd(tree.id)}
+                        onClick={() => handleAddToCart(tree)}
+                        disabled={addedId === tree.id}
                         className={`w-full font-bold py-2.5 rounded-xl transition-all duration-300 flex items-center justify-center gap-2 ${
                           addedId === tree.id
-                            ? "bg-primary text-white"
+                            ? "bg-primary text-white scale-[0.98] cursor-not-allowed"
                             : "bg-forest text-white hover:bg-gradient-to-r hover:from-accent-dark hover:via-accent hover:to-accent-light shadow-md"
                         }`}
                       >
-                        {addedId === tree.id ? "✓ Added to Cart" : "🌿 Sponsor This Tree"}
+                        {addedId === tree.id 
+                          ? "✓ Added to Cart"
+                          : "🌿 Add to Cart"}
                       </button>
                       <button
                         onClick={() => setSelectedTree(tree.name)}
