@@ -164,7 +164,7 @@ export default function CertificatePage() {
       `}</style>
 
       {/* Download button — hidden when printing */}
-      <div className="no-print fixed top-24 right-8 z-[100]">
+      <div className="no-print fixed top-24 left-4 z-[100]">
         <button
           onClick={handleDownload}
           disabled={downloading}
@@ -181,7 +181,7 @@ export default function CertificatePage() {
               <line x1="12" y1="15" x2="12" y2="3" />
             </svg>
           )}
-          {downloading ? "Generating PDF..." : "Direct Download Certificate"}
+          {downloading ? "Generating PDF..." : "Download Certificate"}
         </button>
       </div>
 
