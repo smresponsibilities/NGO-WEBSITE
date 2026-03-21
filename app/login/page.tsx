@@ -3,6 +3,7 @@
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
+import toast from "react-hot-toast";
 
 export default function Login() {
   const [email, setEmail] = useState("");
@@ -23,9 +24,12 @@ export default function Login() {
       const data = await res.json();
       
       if (!res.ok) {
+        toast.error(data.error || "Login failed");
         setError(data.error || "Login failed");
         return;
       }
+      
+      toast.success("Login Successful! Welcome back from all of us.");
       
       if (data.user.role === "admin") {
         router.push("/admin");
@@ -34,6 +38,7 @@ export default function Login() {
       }
       router.refresh();
     } catch (err) {
+      toast.error("An unexpected error occurred. Please check network connection.");
       setError("An unexpected error occurred. Please check network connection.");
     }
   };

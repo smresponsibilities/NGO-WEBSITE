@@ -3,6 +3,7 @@
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
+import toast from "react-hot-toast";
 
 export default function Register() {
   const [name, setName] = useState("");
@@ -25,9 +26,12 @@ export default function Register() {
       const data = await res.json();
       
       if (!res.ok) {
+        toast.error(data.error || "Registration failed");
         setError(data.error || "Registration failed");
         return;
       }
+      
+      toast.success("Registration Successful! Thank you for joining our mission.");
       
       if (data.user.role === "admin") {
         router.push("/admin");
@@ -36,6 +40,7 @@ export default function Register() {
       }
       router.refresh();
     } catch (err) {
+      toast.error("An unexpected error occurred connecting to database.");
       setError("An unexpected error occurred connecting to database.");
     }
   };

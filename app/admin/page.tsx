@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
+import toast from "react-hot-toast";
 
 export default function AdminPanel() {
   const [activeTab, setActiveTab] = useState("trees");
@@ -24,26 +25,36 @@ export default function AdminPanel() {
         return;
       }
       const json = await res.json();
-      if (json.error) setAdminError(json.error);
+      if (json.error) {
+        setAdminError(json.error);
+        toast.error(json.error);
+      }
       setData((prev: any) => ({ ...prev, [activeTab]: json.data || [] }));
     } catch(e: any) {
       setAdminError(e.message);
+      toast.error(e.message);
     }
   };
 
   const handleLogout = async () => {
     await fetch("/api/auth/logout", { method: "POST" });
+    toast.success("Logout Successful! Thank you for managing the platform.");
     router.push("/login");
   };
 
   const [newTree, setNewTree] = useState({ name: "", price: "", type: "", img: "" });
   const handleAddTree = async (e: React.FormEvent) => {
     e.preventDefault();
-    await fetch("/api/admin/trees", { 
+    const res = await fetch("/api/admin/trees", { 
       method: "POST", 
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify(newTree) 
     });
+    if (res.ok) {
+      toast.success("Creation Successful! Thank you for adding a new tree.");
+    } else {
+      toast.error("Failed to add tree");
+    }
     setNewTree({ name: "", price: "", type: "", img: "" });
     fetchData();
   };
@@ -60,8 +71,10 @@ export default function AdminPanel() {
     const json = await res.json();
     if (!res.ok || json.error) {
       setAdminError(json.error || "POST Failed");
+      toast.error(json.error || "Failed to add project");
       return;
     }
+    toast.success("Project Created! Thank you for organizing this initiative.");
     setNewProject({ title: "", description: "", location: "", targetTrees: "" });
     fetchData();
   };
@@ -78,39 +91,56 @@ export default function AdminPanel() {
     const json = await res.json();
     if (!res.ok || json.error) {
       setAdminError(json.error || "POST Failed");
+      toast.error(json.error || "Failed to add partner");
       return;
     }
+    toast.success("Partnership Created! Thank you for adding a new CSR partner.");
     setNewPartner({ companyName: "", logoUrl: "", treesSponsored: "", description: "" });
     fetchData();
   };
 
   const handleUpdateProjectTrees = async (projectId: string, amount: number) => {
     if (!amount || isNaN(amount) || amount <= 0) return;
-    await fetch("/api/admin/projects", {
+    const res = await fetch("/api/admin/projects", {
       method: "PUT",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ projectId, action: "addTrees", amount })
     });
+    if (res.ok) {
+      toast.success(`Update Successful! Thank you for adding ${amount} trees to the project.`);
+    } else {
+      toast.error("Failed to add trees to project");
+    }
     fetchData();
   };
 
   const handleDeleteItem = async (type: "trees" | "projects" | "partners", id: string) => {
     if (confirm(`Are you sure you want to delete this ${type === "trees" ? "tree" : type === "projects" ? "project" : "partner"}?`)) {
-      await fetch(`/api/admin/${type}`, {
+      const res = await fetch(`/api/admin/${type}`, {
         method: "DELETE",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ id })
       });
+      if (res.ok) {
+        toast.success("Deletion Successful! Thank you for keeping our data clean.");
+      } else {
+        toast.error("Failed to delete item");
+      }
       fetchData();
     }
   };
 
   const validateOrder = async (orderId: string) => {
-    await fetch("/api/admin/orders", { 
+    const res = await fetch("/api/admin/orders", { 
       method: "PUT", 
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ orderId, validated: true }) 
     });
+    if (res.ok) {
+      toast.success("Validation Successful! Thank you for generating the certificate.");
+    } else {
+      toast.error("Failed to validate order");
+    }
     fetchData();
   };
 

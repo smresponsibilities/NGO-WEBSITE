@@ -3,6 +3,7 @@
 import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
+import toast from "react-hot-toast";
 
 export default function UserDashboard() {
   const [orders, setOrders] = useState([]);
@@ -20,6 +21,7 @@ export default function UserDashboard() {
 
   const handleLogout = async () => {
     await fetch("/api/auth/logout", { method: "POST" });
+    toast.success("Logout Successful! Thank you for visiting the dashboard.");
     router.push("/login");
   };
 

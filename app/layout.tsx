@@ -4,6 +4,7 @@ import Footer from "../components/Footer";
 import WhatsAppButton from "../components/WhatsAppButton";
 import { CartProvider } from "../components/CartProvider";
 import CartSidebar from "../components/CartSidebar";
+import ToasterProvider from "../components/ToasterProvider";
 
 export const metadata = {
   title: "Renukiran Foundation — Plant Trees, Restore Nature",
@@ -24,6 +25,7 @@ export default function RootLayout({
         <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet" />
       </head>
       <body className="font-body bg-cream text-bark antialiased min-h-screen flex flex-col">
+        <ToasterProvider />
         <CartProvider>
           <Navigation />
           <main className="flex-1">

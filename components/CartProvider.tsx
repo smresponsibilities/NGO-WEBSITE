@@ -1,6 +1,7 @@
 "use client";
 
 import React, { createContext, useContext, useState, useEffect } from "react";
+import toast from "react-hot-toast";
 
 export interface CartItem {
   id: string | number;
@@ -51,10 +52,15 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
       return [...prev, { ...item, quantity }];
     });
     setIsCartOpen(true);
+    toast.success(`Addition Successful! Thank you for selecting ${item.name}.`);
   };
 
   const removeFromCart = (id: string | number) => {
-    setCartItems(prev => prev.filter(i => i.id !== id));
+    setCartItems(prev => {
+      const item = prev.find(i => i.id === id);
+      if (item) toast.success(`Removal Successful! Thank you for updating your cart.`);
+      return prev.filter(i => i.id !== id);
+    });
   };
 
   const updateQuantity = (id: string | number, delta: number) => {
@@ -67,7 +73,10 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
     }));
   };
 
-  const clearCart = () => setCartItems([]);
+  const clearCart = () => {
+    setCartItems([]);
+    toast.success("Clearance Successful! Thank you for using the marketplace.");
+  };
 
   const getCartTotal = () => cartItems.reduce((total, item) => total + (item.price * item.quantity), 0);
 

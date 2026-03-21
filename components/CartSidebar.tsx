@@ -3,6 +3,7 @@
 import { useCart } from "./CartProvider";
 import Script from "next/script";
 import { useState } from "react";
+import toast from "react-hot-toast";
 
 export default function CartSidebar() {
   const { cartItems, isCartOpen, setIsCartOpen, removeFromCart, updateQuantity, getCartTotal, clearCart } = useCart();
@@ -17,7 +18,7 @@ export default function CartSidebar() {
       // Enforce Login Gate
       const meRes = await fetch("/api/user/me");
       if (!meRes.ok) {
-        alert("You must be logged in to sponsor trees and receive your digital certificate.");
+        toast.error("You must be logged in to sponsor trees and receive your digital certificate.");
         window.location.href = "/login";
         return;
       }
@@ -53,9 +54,9 @@ export default function CartSidebar() {
             if (verifyData.success) {
               clearCart();
               setIsCartOpen(false);
-              alert("Payment Successful! Thank you for planting trees.");
+              toast.success("Payment Successful! Thank you for planting trees.");
             } else {
-              alert("Payment verification failed");
+              toast.error("Payment verification failed");
             }
           } catch(e) { console.error(e) }
         },
@@ -71,12 +72,12 @@ export default function CartSidebar() {
 
       const rzp = new (window as any).Razorpay(options);
       rzp.on("payment.failed", function (response: any) {
-        alert("Payment Failed: " + response.error.description);
+        toast.error("Payment Failed: " + response.error.description);
       });
       rzp.open();
     } catch (err) {
       console.error("Checkout issue:", err);
-      alert("Unable to initiate checkout.");
+      toast.error("Unable to initiate checkout.");
     } finally {
       setProcessing(false);
     }
