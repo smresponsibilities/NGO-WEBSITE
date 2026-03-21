@@ -47,7 +47,9 @@ export default function CertificatePage() {
         height: element.clientHeight * 2,
         style: {
           transform: 'scale(2)',
-          transformOrigin: 'top left'
+          transformOrigin: 'top left',
+          borderRadius: '0',
+          boxShadow: 'none'
         }
       });
 
