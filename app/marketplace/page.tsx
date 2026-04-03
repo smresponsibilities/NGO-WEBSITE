@@ -114,13 +114,13 @@ export default function Marketplace() {
           </div>
           <div className="relative z-20 flex flex-col justify-center max-w-2xl px-8 md:px-14 py-12">
             <motion.span initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 0.3 }} className="inline-flex w-fit items-center gap-2 rounded-full bg-accent/20 px-4 py-1.5 text-xs font-bold uppercase tracking-[0.12em] text-accent backdrop-blur-md border border-accent/20 mb-5">
-              <Leaf className="w-3 h-3" /> 4ft Tree + 3 Years Care + GeoTag
+              <Leaf className="w-3 h-3" /> 4.1ft Tree + 3 Years Care + GeoTag
             </motion.span>
             <motion.h1 initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.4 }} className="heading-serif text-white text-3xl md:text-5xl font-black leading-tight mb-4">
-              Gift a tree for<br/>every special moment
+              Gift a tree<br/>every special moment
             </motion.h1>
             <motion.p initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 0.5 }} className="text-white/50 text-base mb-6 max-w-lg leading-relaxed font-accent">
-              Celebrate birthdays, memorials, and anniversaries with a living legacy. Starting at ₹299 with digital certificate.
+              Celebrate birthdays, memorials, and anniversaries with a living legacy. Starting at just 299 with digital certificate.
             </motion.p>
             <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 0.6 }} className="flex flex-wrap gap-3">
               {["4.5★ Rating", "1.2M+ Trees", "GPS Tracking", "3-Year Care"].map((tag) => (
@@ -217,7 +217,7 @@ export default function Marketplace() {
           <div className="flex items-center justify-between mb-6">
             <div>
               <h2 className="heading-serif text-2xl font-bold text-forest">Choose a Tree</h2>
-              <p className="text-sm text-earth mt-1 font-accent">{ngo_filteredTrees.length} trees available</p>
+              <p className="text-sm text-earth mt-1 font-accent">{ngo_filteredTrees.length} Trees available</p>
             </div>
             <select
               className="bg-surface border border-sand/50 text-sm font-medium text-forest rounded-xl py-2 pl-4 pr-8 cursor-pointer hover:border-emerald/30 transition-colors focus:ring-1 focus:ring-emerald/30 focus:border-emerald focus:outline-none"
@@ -225,8 +225,8 @@ export default function Marketplace() {
               onChange={(e) => setNgoSortBy(e.target.value)}
             >
               <option value="recommended">Recommended</option>
-              <option value="price-low">Price: Low → High</option>
-              <option value="price-high">Price: High → Low</option>
+              <option value="price-low">Price: Low to High</option>
+              <option value="price-high">Price: High to Low</option>
             </select>
           </div>
 
@@ -237,8 +237,8 @@ export default function Marketplace() {
           ) : ngo_filteredTrees.length === 0 ? (
             <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="flex flex-col items-center justify-center h-64 text-earth bg-surface rounded-2xl border border-sand/50">
               <Search className="w-12 h-12 text-earth/30 mb-4" />
-              <p className="font-bold text-lg text-forest">No trees match your filters</p>
-              <p className="text-sm font-accent mb-4">Try adjusting the filters above</p>
+              <p className="font-bold text-lg text-forest">No trees match your filters sorry</p>
+              <p className="text-sm font-accent mb-4">Try adjusting the filters above please</p>
               <button onClick={() => setNgoActiveFilters(["Fruit Bearing", "Medicinal", "Shade Giving"])} className="text-sm text-emerald font-bold hover:underline">
                 Reset all filters
               </button>

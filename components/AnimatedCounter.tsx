@@ -11,6 +11,7 @@ interface AnimatedCounterProps {
   className?: string;
 }
 
+// simple counter
 export default function AnimatedCounter({
   end,
   suffix = "",

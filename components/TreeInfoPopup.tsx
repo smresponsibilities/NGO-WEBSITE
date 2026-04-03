@@ -49,7 +49,7 @@ export default function TreeInfoPopup({ treeName, isOpen, onClose }: TreeInfoPop
         }
       } catch (err) {
         if (ngo_isMounted) {
-          setNgoDescription(`The ${treeName} is an incredible species that contributes significantly to our environment. Trees like this are vital to our ecosystem, providing essential oxygen, improving local air quality, stabilizing soil, and supporting diverse wildlife. Planting a ${treeName} successfully helps restore nature's balance.`);
+          setNgoDescription(`The ${treeName} is an incredible specie like any other tree this also contributes significantly  to our environment. All trees including this are vital to our ecosystem, providing essential O, improving local air quality, stabilizing soil, and supporting diverse wildlife. Plant this ${treeName} successfully helps restore nature's balance.`);
           setNgoLoading(false);
         }
       }
@@ -64,13 +64,13 @@ export default function TreeInfoPopup({ treeName, isOpen, onClose }: TreeInfoPop
 
   return (
     <div className="fixed inset-0 z-[100] flex items-center justify-center p-4">
-      {/* Backdrop */}
+      {/* Backdrop  */}
       <div 
         className="absolute inset-0 bg-black/70 backdrop-blur-sm transition-opacity" 
         onClick={onClose}
       ></div>
 
-      {/* Popup / Modal */}
+      {/* Popup / Modal  */}
       <div className="relative z-10 w-full max-w-md bg-[#1c1c1c] border border-white/10 rounded-3xl p-6 md:p-8 shadow-2xl transform scale-100 transition-all duration-300">
         {/* Close Button */}
         <button 
@@ -116,7 +116,7 @@ export default function TreeInfoPopup({ treeName, isOpen, onClose }: TreeInfoPop
               className="w-full h-12 flex items-center justify-center rounded-full bg-gradient-to-r from-accent-dark via-accent to-accent-light text-white text-[15px] font-bold hover:shadow-xl hover:shadow-accent/20 transition-all hover:scale-105 active:scale-95"
               onClick={onClose}
             >
-              🌿 Plant a Tree
+               Plant a Tree
             </Link>
             <button 
               onClick={onClose}

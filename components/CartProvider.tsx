@@ -58,7 +58,7 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
   const ngo_removeFromCart = (id: string | number) => {
     setCartItems(prev => {
       const ngo_targetItem = prev.find(i => i.id === id);
-      if (ngo_targetItem) toast.success(`Removal Successful! Thank you for updating your cart.`);
+      if (ngo_targetItem) toast.success(`Removing successful! Thank you for updating your cart.`);
       return prev.filter(i => i.id !== id);
     });
   };
@@ -75,7 +75,7 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
 
   const ngo_clearCart = () => {
     setCartItems([]);
-    toast.success("Clearance Successful! Thank you for using the marketplace.");
+    toast.success("Clearing successful! Thank you for your time");
   };
 
   const ngo_getCartTotal = () => cartItems.reduce((total, item) => total + (item.price * item.quantity), 0);

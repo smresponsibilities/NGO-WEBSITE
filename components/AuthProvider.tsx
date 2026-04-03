@@ -16,6 +16,7 @@ interface AuthContextType {
 
 const NgoAuthContext = createContext<AuthContextType>({ user: null, loading: true, ngo_refresh: () => {} });
 
+// AUTHHHHHHHHHHHHHHHHH
 export function AuthProvider({ children }: { children: React.ReactNode }) {
   const [user, setUser] = useState<UserData | null>(null);
   const [loading, setLoading] = useState(true);

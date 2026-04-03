@@ -19,6 +19,7 @@ const ngo_directionMap = {
   right: { x: -40, y: 0 },
 };
 
+
 export default function SectionReveal({
   children,
   className = "",
@@ -48,7 +49,7 @@ export default function SectionReveal({
   );
 }
 
-/* Stagger container for child elements */
+// Stagger container for child elements 
 export function StaggerContainer({
   children,
   className = "",

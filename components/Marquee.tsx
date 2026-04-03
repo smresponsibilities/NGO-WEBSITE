@@ -30,7 +30,6 @@ export default function Marquee({
         }}
       >
         {children}
-        {/* Duplicate for seamless loop */}
         {children}
       </div>
     </div>

@@ -54,9 +54,9 @@ export default function CartSidebar() {
             if (ngo_verifyData.success) {
               ngo_clearCart();
               setIsCartOpen(false);
-              toast.success("Payment Successful! Thank you for planting trees.");
+              toast.success("Payment Successful! Thank you for your contribution.");
             } else {
-              toast.error("Payment verification failed");
+              toast.error("Payment failed");
             }
           } catch(e) { console.error(e) }
         },
@@ -101,7 +101,7 @@ export default function CartSidebar() {
         {/* Header */}
         <div className="flex items-center justify-between p-6 border-b border-[#e5e0d3] bg-white">
           <h2 className="font-serif font-bold text-[#1c4532] text-2xl flex items-center gap-2">
-             🛒 Your Cart
+              Your Cart
           </h2>
           <button 
             onClick={() => setIsCartOpen(false)}
@@ -161,11 +161,11 @@ export default function CartSidebar() {
                   : "bg-[#1c4532] text-white hover:bg-[#047857] shadow-lg hover:shadow-[#047857]/20"
               }`}
             >
-              {ngo_processing ? "⌛ Processing Interface..." : "💳 Checkout via Razorpay"}
+              {ngo_processing ? " Processing Interface..." : " Checkout via Razorpay"}
             </button>
             <p className="text-center text-[10.px] text-[#8a7f72] mt-4 flex items-center justify-center gap-1.5 font-medium">
               <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect><path d="M7 11V7a5 5 0 0 1 10 0v4"></path></svg>
-              Secure 128-bit Encrypted Transaction
+              Secure 1024-bit Encrypted Transaction
             </p>
           </div>
         )}

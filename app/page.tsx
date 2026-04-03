@@ -8,6 +8,7 @@ import AnimatedCounter from "../components/AnimatedCounter";
 import ParticleField from "../components/ParticleField";
 import Marquee from "../components/Marquee";
 
+// jhuthe
 const ngo_testimonials = [
   { name: "Priya Sharma", location: "Mumbai", text: "Planted 10 trees for my daughter's birthday. Received GPS coordinates and beautiful certificates! Truly transparent.", rating: 5 },
   { name: "Rahul Verma", location: "Delhi", text: "Our company partnered with Renukiran for CSR. The audit-ready reports and real impact tracking are exceptional.", rating: 5 },
@@ -17,6 +18,7 @@ const ngo_testimonials = [
   { name: "Arjun Reddy", location: "Hyderabad", text: "The digital certificate for each tree is beautifully designed. Makes for a perfect green gift.", rating: 5 },
 ];
 
+// sache
 const ngo_focusAreas = [
   { title: "Agroforestry", desc: "Empowering farmers with sustainable agriculture and tree planting.", icon: Sprout, image: "https://images.unsplash.com/photo-1625246333195-78d9c38ad449?auto=format&fit=crop&q=80&w=600" },
   { title: "Miyawaki Forests", desc: "Dense, native forests in urban areas — 30x denser, 10x faster.", icon: Trees, image: "https://images.unsplash.com/photo-1448375240586-882707db888b?auto=format&fit=crop&q=80&w=600" },

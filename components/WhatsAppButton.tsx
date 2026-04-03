@@ -1,5 +1,6 @@
 "use client";
 
+// Whatsapp button that takes us to whatsapp
 export default function WhatsAppButton() {
   return (
     <a

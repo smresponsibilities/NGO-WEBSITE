@@ -3,13 +3,15 @@
 import { motion } from "framer-motion";
 import { useRef, useState } from "react";
 
+
 interface TiltCardProps {
   children: React.ReactNode;
   className?: string;
   tiltDegree?: number;
   glare?: boolean;
 }
-
+  
+// Component for tilt card effect
 export default function TiltCard({ children, className = "", tiltDegree = 4, glare = true }: TiltCardProps) {
   const ngo_ref = useRef<HTMLDivElement>(null);
   const [ngo_transform, setNgoTransform] = useState({ rotateX: 0, rotateY: 0, glareX: 50, glareY: 50 });

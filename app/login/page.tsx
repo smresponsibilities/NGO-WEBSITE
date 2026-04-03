@@ -69,8 +69,9 @@ export default function Login() {
             <span className="text-white font-bold text-lg">Renukiran</span>
           </div>
           <h2 className="heading-serif text-3xl font-black text-white leading-tight mb-3">
-            Every tree planted is a<br/>promise to tomorrow.
+            Every tree planted is a<br/> tree for tomorrow.
           </h2>
+          {/* placeholder numbers */}
           <p className="text-white/50 text-sm font-accent max-w-md">
             Join 25,000+ Indians who are restoring our planet — one tree at a time.
           </p>
@@ -105,7 +106,7 @@ export default function Login() {
           </div>
 
           <h1 className="heading-serif text-3xl font-black text-forest mb-2">Welcome back</h1>
-          <p className="text-earth text-sm font-accent mb-8">Sign in to your dashboard to track your trees and impact.</p>
+          <p className="text-earth text-sm font-accent mb-8">Login to your dashboard to track your trees and impact.</p>
           
           {ngo_error && (
             <motion.div
@@ -157,7 +158,7 @@ export default function Login() {
                 <span className="w-5 h-5 border-2 border-white/30 border-t-white rounded-full animate-spin" />
               ) : (
                 <>
-                  <LogIn className="w-4 h-4" /> Sign In
+                  <LogIn className="w-4 h-4" /> Login
                 </>
               )}
             </motion.button>

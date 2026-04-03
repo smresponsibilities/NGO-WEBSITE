@@ -14,6 +14,7 @@ const NgoLeafLogo = () => (
   </svg>
 );
 
+// very important made by SM
 export default function CertificatePage() {
   const params = useParams();
   const orderId = params.orderId as string;
@@ -29,7 +30,7 @@ export default function CertificatePage() {
         if (json.error) setNgoError(json.error);
         else setNgoCertData(json);
       })
-      .catch(() => setNgoError("Failed to load certificate"))
+      .catch(() => setNgoError("Failed to load certificate unfortunately"))
       .finally(() => setNgoLoading(false));
   }, [orderId]);
 
@@ -91,7 +92,7 @@ export default function CertificatePage() {
         <div className="text-center bg-white p-10 rounded-3xl border border-sand shadow-lg max-w-md">
           <span className="text-5xl mb-4 inline-block">⚠️</span>
           <h2 className="text-2xl font-bold text-forest mb-2">Certificate Unavailable</h2>
-          <p className="text-earth">{ngo_error || "This certificate could not be loaded."}</p>
+          <p className="text-earth">{ngo_error || "This certificate could not be loaded sorry"}</p>
         </div>
       </div>
     );
@@ -165,7 +166,6 @@ export default function CertificatePage() {
         }
       `}</style>
 
-      {/* Download button — hidden when printing */}
       <div className="no-print fixed top-24 left-4 z-[100]">
         <button
           onClick={ngo_handleDownload}

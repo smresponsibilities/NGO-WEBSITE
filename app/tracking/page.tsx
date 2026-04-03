@@ -198,12 +198,12 @@ export default function Tracking() {
         {ngo_loading ? (
           <div className="flex flex-col items-center justify-center py-20 bg-surface rounded-2xl border border-sand/50">
             <Leaf className="w-8 h-8 text-emerald anim-pulse-dot mb-4" />
-            <p className="font-bold text-forest">Loading impact data...</p>
+            <p className="font-bold text-forest">Loading impact data.........</p>
           </div>
         ) : ngo_filtered.length === 0 ? (
           <div className="flex flex-col items-center justify-center py-20 bg-surface rounded-2xl border border-sand/50">
             <MapPin className="w-8 h-8 text-earth/30 mb-4" />
-            <p className="font-bold text-forest">No projects match your filter.</p>
+            <p className="font-bold text-forest">No projects match your filter unfortunately</p>
           </div>
         ) : (
           <StaggerContainer className="grid grid-cols-1 lg:grid-cols-2 gap-5">

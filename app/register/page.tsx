@@ -55,7 +55,7 @@ export default function Register() {
 
   return (
     <div className="flex-1 flex min-h-[80vh]">
-      {/* Left — Image panel */}
+      {/*Image panel */}
       <div className="hidden lg:flex flex-1 relative overflow-hidden">
         <div className="absolute inset-0 bg-cover bg-center" style={{backgroundImage: "url('https://images.unsplash.com/photo-1448375240586-882707db888b?auto=format&fit=crop&q=80')"}}></div>
         <div className="absolute inset-0 bg-gradient-to-r from-dark/80 via-dark/60 to-dark/80"></div>
@@ -67,10 +67,10 @@ export default function Register() {
             <span className="text-white font-bold text-lg">Renukiran</span>
           </div>
           <h2 className="heading-serif text-3xl font-black text-white leading-tight mb-3">
-            Plant a tree.<br/>Change a life.
+            Plant a tree.
           </h2>
           <p className="text-white/50 text-sm font-accent max-w-md">
-            Create your account to sponsor trees, track their growth, and download digital certificates.
+            Create your account to sponsor trees, see their growth
           </p>
         </div>
       </div>
@@ -91,7 +91,7 @@ export default function Register() {
           </div>
 
           <h1 className="heading-serif text-3xl font-black text-forest mb-2">Create account</h1>
-          <p className="text-earth text-sm font-accent mb-8">Join us in planting trees and restoring nature across India.</p>
+          <p className="text-earth text-sm font-accent mb-8">Join us in planting a lot of trees</p>
           
           {ngo_error && (
             <motion.div
@@ -114,7 +114,7 @@ export default function Register() {
                   value={ngo_name}
                   onChange={e => setNgoName(e.target.value)}
                   className="w-full rounded-xl bg-surface border border-sand/60 pl-10 pr-4 py-3 text-sm outline-none focus:border-emerald focus:ring-1 focus:ring-emerald/30 transition-all font-medium text-forest" 
-                  placeholder="John Doe"
+                  placeholder="Shivam Mahajan"
                 />
               </div>
             </div>
@@ -128,7 +128,7 @@ export default function Register() {
                   value={ngo_email}
                   onChange={e => setNgoEmail(e.target.value)}
                   className="w-full rounded-xl bg-surface border border-sand/60 pl-10 pr-4 py-3 text-sm outline-none focus:border-emerald focus:ring-1 focus:ring-emerald/30 transition-all font-medium text-forest" 
-                  placeholder="you@example.com"
+                  placeholder="boom@example.com"
                 />
               </div>
             </div>
@@ -142,7 +142,7 @@ export default function Register() {
                   value={ngo_password}
                   onChange={e => setNgoPassword(e.target.value)}
                   className="w-full rounded-xl bg-surface border border-sand/60 pl-10 pr-4 py-3 text-sm outline-none focus:border-emerald focus:ring-1 focus:ring-emerald/30 transition-all font-medium text-forest" 
-                  placeholder="••••••••"
+                  placeholder="*********"
                 />
               </div>
             </div>
@@ -164,7 +164,7 @@ export default function Register() {
           </form>
           
           <p className="text-sm text-center text-earth mt-8 font-accent">
-            Already have an account? <Link href="/login" className="text-emerald font-bold link-animated">Sign In</Link>
+            Already have an account or just make one? <Link href="/login" className="text-emerald font-bold link-animated">Login</Link>
           </p>
         </motion.div>
       </div>

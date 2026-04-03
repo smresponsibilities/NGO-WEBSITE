@@ -20,6 +20,7 @@ interface ParticleFieldProps {
   maxSize?: number;
 }
 
+// Component for particle field effect made by Anmol
 export default function ParticleField({
   className = "",
   particleCount = 40,

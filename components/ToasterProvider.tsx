@@ -2,6 +2,7 @@
 
 import { Toaster } from "react-hot-toast";
 
+// Layer for toaster    
 export default function ToasterProvider() {
   return (
     <Toaster

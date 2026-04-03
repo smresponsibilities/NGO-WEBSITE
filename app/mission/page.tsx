@@ -5,6 +5,7 @@ import { motion } from "framer-motion";
 import { Eye, Recycle, Users, CheckCircle, Leaf, ArrowRight, Shield, Award, Globe, Linkedin, Twitter, Mail } from "lucide-react";
 import SectionReveal, { StaggerContainer, StaggerItem } from "../../components/SectionReveal";
 
+// not correct rn
 const ngo_timeline = [
   { year: "2015", title: "Foundation Born", desc: "Renukiran Welfare Foundation started with a vision to bridge social welfare and environmental action." },
   { year: "2017", title: "First 10,000 Trees", desc: "First milestone — 10,000 trees planted across Rajasthan's arid landscapes." },
@@ -21,6 +22,7 @@ const ngo_values = [
   { icon: CheckCircle, title: "Accountability", desc: "Audit-ready reports, quarterly updates, and 100% fund utilization." },
 ];
 
+// random people
 const ngo_team = [
   { name: "Renu Sharma", role: "Founder & CEO", desc: "15+ years in social welfare and environmental activism.", gradient: "from-emerald to-primary-light" },
   { name: "Amit Verma", role: "Head of Operations", desc: "Manages 150+ plantation locations across India.", gradient: "from-sky-500 to-blue-500" },
@@ -46,13 +48,13 @@ export default function Mission() {
           <div className="relative z-10">
             <motion.span initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 0.3 }} className="text-accent font-bold tracking-[0.15em] uppercase text-xs mb-4 inline-block font-accent">Our Story</motion.span>
             <motion.h1 initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.4 }} className="heading-serif text-white text-4xl font-black leading-tight md:text-6xl mb-4">
-              Rooted in honesty,<br/>growing with purpose
+              Rooted in honesty and <br/>growing with purpose
             </motion.h1>
-            <motion.p initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 0.5 }} className="text-white/50 text-base max-w-lg mx-auto mb-6 font-accent">Every rupee planted is a seed of hope. Zero overheads — 100% impact.</motion.p>
+            <motion.p initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 0.5 }} className="text-white/50 text-base max-w-lg mx-auto mb-6 font-accent">Every tree planted is a seed of hope. Zero overheads — 100% impact.</motion.p>
             <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 0.6 }} className="flex flex-wrap justify-center gap-4">
               <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
                 <Link href="/marketplace" className="h-12 px-8 flex items-center rounded-full bg-gradient-gold text-white font-bold shadow-lg transition-shadow gap-2">
-                  <Leaf className="w-4 h-4" /> Join the Mission
+                  <Leaf className="w-4 h-4" /> Join the Mission now 
                 </Link>
               </motion.div>
               <Link href="/tracking" className="h-12 px-8 flex items-center rounded-full bg-white/10 backdrop-blur-md border border-white/15 text-white font-semibold hover:bg-white/15 transition-all gap-2">
@@ -71,7 +73,7 @@ export default function Mission() {
               <span className="text-emerald font-bold tracking-[0.15em] uppercase text-xs font-accent">From Slums to Saplings</span>
               <h2 className="heading-serif text-3xl md:text-4xl font-black text-forest leading-tight">Our journey began 11 years ago</h2>
               <p className="text-earth text-base leading-relaxed font-accent">
-                Renukiran started in 2015 with a simple belief: the environment and society are deeply interconnected. What began as community welfare work has grown into India&apos;s most transparent tree plantation platform.
+                Renukiran started in 2015 with a complex belief: the environment and society are deeply interconnected. What began as community welfare work has grown into India&apos;s most transparent tree plantation platform.
               </p>
               <div className="grid grid-cols-3 gap-3 mt-2">
                 {[
@@ -160,7 +162,7 @@ export default function Mission() {
         <div className="max-w-[1280px] mx-auto px-5 relative z-10">
           <SectionReveal className="text-center mb-12">
             <span className="inline-block text-accent font-bold tracking-[0.15em] uppercase text-xs mb-4 font-accent">Leadership</span>
-            <h2 className="heading-serif text-3xl md:text-4xl font-black text-forest">The People Behind the Trees</h2>
+            <h2 className="heading-serif text-3xl md:text-4xl font-black text-forest">The People Half Behind the Trees</h2>
           </SectionReveal>
           <StaggerContainer className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5">
             {ngo_team.map((p, i) => (

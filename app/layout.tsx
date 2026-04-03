@@ -8,12 +8,13 @@ import CartSidebar from "../components/CartSidebar";
 import ToasterProvider from "../components/ToasterProvider";
 import ScrollProgress from "../components/ScrollProgress";
 
+//
 export const metadata = {
-  title: "Renukiran Foundation — Plant Trees, Restore Nature",
-  description: "Join Renukiran Welfare Foundation in our mission to reforest India. Plant a tree for ₹299 with GPS tracking, 3-year care, and digital certificates.",
+  title: "Renukiran Foundation — Plant Trees pretty please",
+  description: "Join Renukiran Welfare Foundation in their mission to reforest India. Plant a tree for just rupees 299 with GPS tracking, 3-year care, and digital certificates.",
   openGraph: {
-    title: "Renukiran Foundation — Plant Trees, Restore Nature",
-    description: "Plant a tree for ₹299 with GPS tracking, 3-year care guarantee, and a digital certificate. Join 25,000+ Indians restoring our planet.",
+    title: "Renukiran Foundation — Plant Trees pretty please",
+    description: "Plant a tree for just rupees 299 with GPS tracking, 3-year care guarantee, and a digital certificate. Join 25,000+ Indians restoring our planet.",
     type: "website",
     locale: "en_IN",
   },

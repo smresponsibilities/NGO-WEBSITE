@@ -5,6 +5,7 @@ import { useRouter } from "next/navigation";
 import toast from "react-hot-toast";
 import { Leaf, Globe, FileText, Building2, LogOut, MapPin, DollarSign, Lock, Inbox, AlertTriangle } from "lucide-react";
 
+// admin at /admin route who would have thought 
 export default function AdminPanel() {
   const [ngo_activeTab, setNgoActiveTab] = useState("trees");
   const [ngo_data, setNgoData] = useState<any>({ trees: [], projects: [], orders: [], partners: [] });
@@ -22,7 +23,7 @@ export default function AdminPanel() {
       const ngo_res = await fetch(`/api/admin/${ngo_activeTab}`, { cache: "no-store" });
       if (!ngo_res.ok) {
         const ngo_text = await ngo_res.text();
-        setNgoAdminError(`FETCH ERROR: ${ngo_res.status} - ${ngo_text.substring(0, 100)}`);
+        setNgoAdminError(`ERROR at even admin: ${ngo_res.status} - ${ngo_text.substring(0, 100)}`);
         return;
       }
       const ngo_json = await ngo_res.json();
@@ -39,7 +40,7 @@ export default function AdminPanel() {
 
   const ngo_handleLogout = async () => {
     await fetch("/api/auth/logout", { method: "POST" });
-    toast.success("Logout Successful! Thank you for managing the platform.");
+    toast.success("Logout successful! Thank you for managing the platform.");
     ngo_router.push("/login");
   };
 
@@ -52,9 +53,9 @@ export default function AdminPanel() {
       body: JSON.stringify(ngo_newTree) 
     });
     if (ngo_res.ok) {
-      toast.success("Creation Successful! Thank you for adding a new tree.");
+      toast.success("Creation successful");
     } else {
-      toast.error("Failed to add tree");
+      toast.error("Failed to add tree hawww");
     }
     setNgoNewTree({ name: "", price: "", type: "", img: "" });
     ngo_fetchData();
@@ -72,10 +73,10 @@ export default function AdminPanel() {
     const ngo_json = await ngo_res.json();
     if (!ngo_res.ok || ngo_json.error) {
       setNgoAdminError(ngo_json.error || "POST Failed");
-      toast.error(ngo_json.error || "Failed to add project");
+      toast.error(ngo_json.error || "Failed to add project oopsie");
       return;
     }
-    toast.success("Project Created! Thank you for organizing this initiative.");
+    toast.success("Project Created");
     setNgoNewProject({ title: "", description: "", location: "", targetTrees: "" });
     ngo_fetchData();
   };
@@ -92,10 +93,10 @@ export default function AdminPanel() {
     const ngo_json = await ngo_res.json();
     if (!ngo_res.ok || ngo_json.error) {
       setNgoAdminError(ngo_json.error || "POST Failed");
-      toast.error(ngo_json.error || "Failed to add partner");
+      toast.error(ngo_json.error || "Failed to add partner awww");
       return;
     }
-    toast.success("Partnership Created! Thank you for adding a new CSR partner.");
+    toast.success("Partnership Created");
     setNgoNewPartner({ companyName: "", logoUrl: "", treesSponsored: "", description: "" });
     ngo_fetchData();
   };
@@ -108,9 +109,9 @@ export default function AdminPanel() {
       body: JSON.stringify({ projectId, action: "addTrees", amount })
     });
     if (ngo_res.ok) {
-      toast.success(`Update Successful! Thank you for adding ${amount} trees to the project.`);
+      toast.success(`Update Successful! Thank you for plating this many ${amount} trees to the project.`);
     } else {
-      toast.error("Failed to add trees to project");
+      toast.error("Failed to add trees to project unfortunately");
     }
     ngo_fetchData();
   };
@@ -123,9 +124,9 @@ export default function AdminPanel() {
         body: JSON.stringify({ id })
       });
       if (ngo_res.ok) {
-        toast.success("Deletion Successful! Thank you for keeping our data clean.");
+        toast.success("Deletion successful");
       } else {
-        toast.error("Failed to delete item");
+        toast.error("Failed to delete item lol");
       }
       ngo_fetchData();
     }
@@ -138,7 +139,7 @@ export default function AdminPanel() {
       body: JSON.stringify({ orderId, validated: true }) 
     });
     if (ngo_res.ok) {
-      toast.success("Validation Successful! Thank you for generating the certificate.");
+      toast.success("Validation successful");
     } else {
       toast.error("Failed to validate order");
     }

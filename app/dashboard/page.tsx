@@ -52,7 +52,7 @@ export default function UserDashboard() {
           onClick={ngo_handleLogout}
           className="px-5 py-2.5 bg-surface border border-sand/50 hover:bg-red-50 hover:border-red-200 hover:text-red-500 rounded-xl font-bold text-forest text-sm transition-all flex items-center gap-2"
         >
-          <LogOut className="w-4 h-4" /> Sign Out
+          <LogOut className="w-4 h-4" /> Logout
         </motion.button>
       </motion.div>
 
@@ -156,7 +156,7 @@ export default function UserDashboard() {
                     </>
                   ) : (
                     <div className="flex items-center justify-center gap-2 w-full py-3 rounded-xl bg-cream text-earth font-bold text-sm border border-sand/50">
-                      <Clock className="w-4 h-4" /> Awaiting Validation
+                      <Clock className="w-4 h-4" /> Awaiting Validation from Renukiran
                     </div>
                   )}
                 </div>

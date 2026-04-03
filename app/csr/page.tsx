@@ -12,6 +12,7 @@ const ngo_csrServices = [
   { icon: Users, title: "Employee Engagement", desc: "Team plantation drives that build culture, create ESG value, and genuinely improve the environment.", features: ["Virtual plantation events", "Individual certificates", "Impact dashboards"] },
 ];
 
+// most imp
 export default function CSR() {
   const [ngo_formStep, setNgoFormStep] = useState(0);
   const [ngo_formData, setNgoFormData] = useState({ company: "", email: "", phone: "", trees: "", message: "" });
@@ -46,10 +47,10 @@ export default function CSR() {
           </div>
           <div className="relative z-10">
             <motion.span initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 0.3 }} className="inline-flex w-fit items-center gap-2 rounded-full bg-accent/20 px-4 py-1.5 text-xs font-bold uppercase tracking-[0.12em] text-accent backdrop-blur-md border border-accent/20 mb-5">
-              <Building2 className="w-3 h-3" /> For Startups & Corporates
+              <Building2 className="w-3 h-3" /> For Startups & Corporates & Your company
             </motion.span>
-            <motion.h1 initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.4 }} className="heading-serif text-white text-4xl md:text-5xl font-black leading-tight mb-3">Corporate CSR Solutions</motion.h1>
-            <motion.p initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 0.5 }} className="text-white/50 text-base max-w-xl mb-6 font-accent">Partner with Renukiran to achieve ESG goals through impactful, transparent plantation initiatives.</motion.p>
+            <motion.h1 initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.4 }} className="heading-serif text-white text-4xl md:text-5xl font-black leading-tight mb-3">Corporate CSR Solutions </motion.h1>
+            <motion.p initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 0.5 }} className="text-white/50 text-base max-w-xl mb-6 font-accent">Partner with Renukiran to achieve your ESG goals through impactful, transparent plantation initiatives </motion.p>
             <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 0.6 }} className="flex flex-wrap gap-4">
               <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
                 <a href="#contact" className="h-12 px-8 flex items-center rounded-full bg-gradient-gold text-white font-bold shadow-lg transition-shadow gap-2">Get Started <ArrowRight className="w-4 h-4" /></a>
@@ -86,7 +87,7 @@ export default function CSR() {
       {ngo_partners.length > 0 && (
         <section className="py-12 border-t border-b border-sand/50 bg-white">
           <div className="max-w-[1280px] mx-auto px-5 text-center">
-            <p className="text-xs font-bold text-earth uppercase tracking-[0.15em] mb-8 font-accent">Trusted by industry leaders</p>
+            <p className="text-xs font-bold text-earth uppercase tracking-[0.15em] mb-8 font-accent">Trusted by industry leaders </p>
             <div className="flex flex-wrap justify-center items-center gap-10 md:gap-16 opacity-70">
               {ngo_partners.map((p) => (
                 <motion.div key={p._id} whileHover={{ scale: 1.05 }} className="flex flex-col items-center gap-2 group cursor-default grayscale hover:grayscale-0 transition-all">
@@ -107,7 +108,7 @@ export default function CSR() {
         <div className="max-w-[1280px] mx-auto px-5 relative z-10">
           <SectionReveal className="text-center mb-12">
             <span className="inline-block text-emerald font-bold tracking-[0.15em] uppercase text-xs mb-4 font-accent">Partnership Benefits</span>
-            <h2 className="heading-serif text-3xl md:text-4xl font-black text-forest">Why partner with Renukiran?</h2>
+            <h2 className="heading-serif text-3xl md:text-4xl font-black text-forest">Why partner with Renukiran?</h2> 
           </SectionReveal>
           <StaggerContainer className="grid grid-cols-1 md:grid-cols-3 gap-5">
             {[
@@ -135,7 +136,7 @@ export default function CSR() {
         <div className="max-w-[1280px] mx-auto px-5 relative z-10">
           <SectionReveal className="text-center mb-12">
             <span className="inline-block text-accent font-bold tracking-[0.15em] uppercase text-xs mb-4 font-accent">Our Services</span>
-            <h2 className="heading-serif text-3xl md:text-4xl font-black text-forest">Tailored solutions for your CSR goals</h2>
+            <h2 className="heading-serif text-3xl md:text-4xl font-black text-forest">Tailored solutions as per your  CSR goals</h2>
           </SectionReveal>
           <StaggerContainer className="grid grid-cols-1 md:grid-cols-3 gap-6">
             {ngo_csrServices.map((s, i) => (
@@ -169,7 +170,7 @@ export default function CSR() {
           </SectionReveal>
           <StaggerContainer className="grid grid-cols-1 md:grid-cols-4 gap-5">
             {[
-              { step: "01", icon: Phone, title: "Connect", desc: "Share your CSR goals and budget with our team." },
+              { step: "01", icon: Phone, title: "Connect", desc: "Share your CSR goals and budget with our team" },
               { step: "02", icon: FileText, title: "Plan", desc: "We design a customized plantation strategy." },
               { step: "03", icon: Leaf, title: "Execute", desc: "Trees planted with full documentation & geo-tagging." },
               { step: "04", icon: BarChart3, title: "Report", desc: "ESG-compliant impact reports delivered quarterly." },
@@ -197,14 +198,14 @@ export default function CSR() {
           <SectionReveal className="text-center mb-10">
             <span className="inline-block text-emerald font-bold tracking-[0.15em] uppercase text-xs mb-4 font-accent">Get Started</span>
             <h2 className="heading-serif text-3xl font-black text-forest mb-2">Partner with Renukiran</h2>
-            <p className="text-earth text-sm font-accent">Our CSR team will respond within 24 hours.</p>
+            <p className="text-earth text-sm font-accent">Our CSR team will respond within 24 hours hopefully</p>
           </SectionReveal>
 
           {ngo_submitted ? (
             <motion.div initial={{ opacity: 0, scale: 0.95 }} animate={{ opacity: 1, scale: 1 }} className="text-center p-12 rounded-2xl bg-emerald/5 border border-emerald/15">
               <CheckCircle className="w-12 h-12 text-emerald mx-auto mb-4" />
               <h3 className="heading-serif text-2xl font-bold text-forest mb-2">Thank You!</h3>
-              <p className="text-earth font-accent">Our team will reach out within 24 hours.</p>
+              <p className="text-earth font-accent">Our team will reach out within 24 hours hopefully</p>
             </motion.div>
           ) : (
             <div className="bg-surface rounded-2xl p-8 border border-sand/50 shadow-lg">

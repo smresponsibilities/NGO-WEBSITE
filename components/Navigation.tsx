@@ -16,6 +16,16 @@ const ngo_navLinks = [
   { href: "/mission", label: "About Us" },
 ];
 
+const NgoLeafLogo = () => (
+  <svg width="32" height="32" viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg">
+    <path d="M16 2C16 2 6 8 6 18C6 23.5228 10.4772 28 16 28C21.5228 28 26 23.5228 26 18C26 8 16 2 16 2Z" fill="#047857" opacity="0.9"/>
+    <path d="M16 8C16 8 11 13 11 19C11 21.7614 13.2386 24 16 24C18.7614 24 21 21.7614 21 19C21 13 16 8 16 8Z" fill="#34d399" opacity="0.6"/>
+    <path d="M16 28V12" stroke="#faf8f3" strokeWidth="1.5" strokeLinecap="round" opacity="0.7"/>
+    <path d="M16 18L12 14" stroke="#faf8f3" strokeWidth="1" strokeLinecap="round" opacity="0.5"/>
+    <path d="M16 15L19 12" stroke="#faf8f3" strokeWidth="1" strokeLinecap="round" opacity="0.5"/>
+  </svg>
+);
+
 export default function Navigation() {
   const ngo_pathname = usePathname();
   const [ngo_mobileMenuOpen, setNgoMobileMenuOpen] = useState(false);
@@ -54,8 +64,8 @@ export default function Navigation() {
             whileHover={{ scale: 1.1, rotate: 8 }}
             transition={{ type: "spring", stiffness: 300 }}
           >
-            <div className="relative w-9 h-9 rounded-xl bg-gradient-to-br from-emerald to-primary-light flex items-center justify-center shadow-md shadow-emerald/20">
-              <Leaf className="w-5 h-5 text-white" strokeWidth={2.5} />
+            <div className="relative w-9 h-9 rounded-xl flex items-center justify-center shadow-md shadow-emerald/20">
+              <NgoLeafLogo />
             </div>
           </motion.div>
           <div className="flex flex-col">
@@ -64,7 +74,7 @@ export default function Navigation() {
           </div>
         </Link>
 
-        {/* Desktop Nav */}
+        {/* Desktop Nav  */}
         <nav className="hidden lg:flex items-center gap-1">
           {ngo_navLinks.map((link) => {
             const ngo_isActive = ngo_pathname === link.href;
@@ -97,7 +107,7 @@ export default function Navigation() {
           })}
         </nav>
 
-        {/* Right Side */}
+        {/* Right Side  */}
         <div className="flex items-center gap-2 sm:gap-3">
           {/* Cart */}
           <motion.button
@@ -121,7 +131,7 @@ export default function Navigation() {
             </AnimatePresence>
           </motion.button>
 
-          {/* Auth Button */}
+          {/*  Auth Button */}
           {user ? (
             <Link
               href={user.role === "admin" ? "/admin" : "/dashboard"}
@@ -135,11 +145,11 @@ export default function Navigation() {
               href="/login"
               className="hidden lg:flex items-center gap-2 px-4 py-2 rounded-full bg-white/80 border border-sand text-forest text-[13px] font-semibold hover:bg-cream transition-colors shadow-sm"
             >
-              Sign In
+              Login
             </Link>
           )}
 
-          {/* Donate CTA */}
+          {/* Donate Call to action */}
           <motion.div whileHover={{ scale: 1.03 }} whileTap={{ scale: 0.97 }}>
             <Link
               href="/marketplace"
@@ -203,6 +213,7 @@ export default function Navigation() {
                       {link.label}
                     </Link>
                   </motion.div>
+
                 );
               })}
 
@@ -227,7 +238,7 @@ export default function Navigation() {
                   className="text-[14px] font-semibold px-4 py-3.5 rounded-xl text-left text-dark/60 hover:text-emerald hover:bg-emerald/5 flex items-center gap-2 w-full"
                 >
                   <User className="w-4 h-4" />
-                  {user ? "Dashboard" : "Sign In"}
+                  {user ? "Dashboard" : "Login"}
                 </Link>
               </motion.div>
 
