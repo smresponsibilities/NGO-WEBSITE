@@ -10,27 +10,27 @@ import { useAuth } from "../../components/AuthProvider";
 import SectionReveal, { StaggerContainer, StaggerItem } from "../../components/SectionReveal";
 
 export default function UserDashboard() {
-  const [orders, setOrders] = useState([]);
-  const { user, refresh } = useAuth();
-  const router = useRouter();
+  const [ngo_orders, setNgoOrders] = useState([]);
+  const { user, ngo_refresh } = useAuth();
+  const ngo_router = useRouter();
 
   useEffect(() => {
-    fetch("/api/user/orders").then(res => {
-      if (!res.ok) return;
-      return res.json();
-    }).then(data => {
-      if (data?.data) setOrders(data.data);
+    fetch("/api/user/orders").then(ngo_res => {
+      if (!ngo_res.ok) return;
+      return ngo_res.json();
+    }).then(ngo_data => {
+      if (ngo_data?.data) setNgoOrders(ngo_data.data);
     }).catch(() => {});
   }, []);
 
-  const handleLogout = async () => {
+  const ngo_handleLogout = async () => {
     await fetch("/api/auth/logout", { method: "POST" });
     toast.success("Signed out successfully.");
-    refresh();
-    router.push("/login");
+    ngo_refresh();
+    ngo_router.push("/login");
   };
 
-  const totalTrees = orders.reduce((acc: number, o: any) => 
+  const ngo_totalTrees = ngo_orders.reduce((acc: number, o: any) => 
     acc + o.trees.reduce((s: number, t: any) => s + t.quantity, 0), 0
   );
 
@@ -49,7 +49,7 @@ export default function UserDashboard() {
         <motion.button
           whileHover={{ scale: 1.02 }}
           whileTap={{ scale: 0.98 }}
-          onClick={handleLogout}
+          onClick={ngo_handleLogout}
           className="px-5 py-2.5 bg-surface border border-sand/50 hover:bg-red-50 hover:border-red-200 hover:text-red-500 rounded-xl font-bold text-forest text-sm transition-all flex items-center gap-2"
         >
           <LogOut className="w-4 h-4" /> Sign Out
@@ -59,10 +59,10 @@ export default function UserDashboard() {
       {/* Stats */}
       <StaggerContainer className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-10">
         {[
-          { icon: Trees, stat: totalTrees, label: "Trees Sponsored", gradient: "from-emerald/10 to-green-500/10" },
-          { icon: FileText, stat: orders.filter((o: any) => o.certificateValidated).length, label: "Certificates Ready", gradient: "from-violet-500/10 to-purple-500/10" },
-          { icon: Clock, stat: orders.filter((o: any) => !o.certificateValidated).length, label: "Pending", gradient: "from-amber-500/10 to-yellow-500/10" },
-          { icon: ShoppingBag, stat: orders.length, label: "Total Orders", gradient: "from-sky-500/10 to-blue-500/10" },
+          { icon: Trees, stat: ngo_totalTrees, label: "Trees Sponsored", gradient: "from-emerald/10 to-green-500/10" },
+          { icon: FileText, stat: ngo_orders.filter((o: any) => o.certificateValidated).length, label: "Certificates Ready", gradient: "from-violet-500/10 to-purple-500/10" },
+          { icon: Clock, stat: ngo_orders.filter((o: any) => !o.certificateValidated).length, label: "Pending", gradient: "from-amber-500/10 to-yellow-500/10" },
+          { icon: ShoppingBag, stat: ngo_orders.length, label: "Total Orders", gradient: "from-sky-500/10 to-blue-500/10" },
         ].map((item, i) => (
           <StaggerItem key={i}>
             <motion.div whileHover={{ y: -4 }} className="text-center p-6 rounded-2xl bg-surface border border-sand/50 shadow-sm hover:shadow-lg hover:border-emerald/15 transition-all group">
@@ -92,7 +92,7 @@ export default function UserDashboard() {
       </SectionReveal>
       
       <StaggerContainer className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5 mb-20">
-        {orders.length === 0 ? (
+        {ngo_orders.length === 0 ? (
           <motion.div
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
@@ -108,7 +108,7 @@ export default function UserDashboard() {
             </motion.div>
           </motion.div>
         ) : (
-          orders.map((o: any) => (
+          ngo_orders.map((o: any) => (
             <StaggerItem key={o._id}>
               <motion.div
                 whileHover={{ y: -4 }}

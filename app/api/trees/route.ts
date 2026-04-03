@@ -1,8 +1,8 @@
 import { NextResponse } from "next/server";
-import dbConnect from "../../../lib/mongodb";
+import ngo_dbConnect from "../../../lib/mongodb";
 import Tree from "../../../models/Tree";
 
-const seedTrees = [
+const ngo_seedTrees = [
   { name: "Mango Tree", price: 25, type: "Fruit Bearing", img: "https://images.unsplash.com/photo-1601004890684-d8cbf643f5f2?auto=format&fit=crop&w=600&q=80" },
   { name: "Neem Tree", price: 15, type: "Medicinal", img: "https://images.unsplash.com/photo-1542273917363-3b1817f69a2d?auto=format&fit=crop&w=600&q=80" },
   { name: "Banyan Tree", price: 45, type: "Shade Giving", img: "https://images.unsplash.com/photo-1502082553048-f009c37129b9?auto=format&fit=crop&w=600&q=80" },
@@ -15,7 +15,7 @@ const seedTrees = [
 ];
 
 // Format seed data consistently
-function formatTree(t: any, index: number) {
+function ngo_formatTree(t: any, index: number) {
   return {
     id: t._id?.toString() || `seed-${index}`,
     name: t.name,
@@ -29,19 +29,19 @@ function formatTree(t: any, index: number) {
 
 export async function GET() {
   try {
-    await dbConnect();
+    await ngo_dbConnect();
 
     // Auto-seed if database is empty
-    const count = await Tree.countDocuments();
-    if (count === 0) {
-      await Tree.insertMany(seedTrees);
+    const ngo_treeCount = await Tree.countDocuments();
+    if (ngo_treeCount === 0) {
+      await Tree.insertMany(ngo_seedTrees);
     }
 
-    const trees = await Tree.find({});
-    return NextResponse.json(trees.map((t, i) => formatTree(t, i)));
+    const ngo_allTrees = await Tree.find({});
+    return NextResponse.json(ngo_allTrees.map((t, i) => ngo_formatTree(t, i)));
   } catch {
     // DB unreachable — return hardcoded seed data so marketplace is never empty
     console.warn("[API /trees] Database unreachable, returning seed data");
-    return NextResponse.json(seedTrees.map((t, i) => formatTree(t, i)));
+    return NextResponse.json(ngo_seedTrees.map((t, i) => ngo_formatTree(t, i)));
   }
 }

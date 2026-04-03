@@ -9,7 +9,7 @@ import { useCart } from "../../components/CartProvider";
 import SectionReveal from "../../components/SectionReveal";
 import TiltCard from "../../components/TiltCard";
 
-interface Tree {
+interface NgoTree {
   id: string | number;
   name: string;
   price: number;
@@ -17,76 +17,76 @@ interface Tree {
   img: string;
 }
 
-const typeIcons: Record<string, any> = {
+const ngo_typeIcons: Record<string, any> = {
   "Fruit Bearing": TreeDeciduous,
   "Medicinal": Leaf,
   "Shade Giving": Heart,
 };
 
 export default function Marketplace() {
-  const [trees, setTrees] = useState<Tree[]>([]);
-  const [loading, setLoading] = useState(true);
-  const [activeFilters, setActiveFilters] = useState<string[]>(["Fruit Bearing", "Medicinal", "Shade Giving"]);
-  const [sortBy, setSortBy] = useState("recommended");
-  const [quantities, setQuantities] = useState<Record<string, number>>({});
-  const [selectedTree, setSelectedTree] = useState<string | null>(null);
-  const [addedId, setAddedId] = useState<string | number | null>(null);
-  const { addToCart } = useCart();
+  const [ngo_trees, setNgoTrees] = useState<NgoTree[]>([]);
+  const [ngo_loading, setNgoLoading] = useState(true);
+  const [ngo_activeFilters, setNgoActiveFilters] = useState<string[]>(["Fruit Bearing", "Medicinal", "Shade Giving"]);
+  const [ngo_sortBy, setNgoSortBy] = useState("recommended");
+  const [ngo_quantities, setNgoQuantities] = useState<Record<string, number>>({});
+  const [ngo_selectedTree, setNgoSelectedTree] = useState<string | null>(null);
+  const [ngo_addedId, setNgoAddedId] = useState<string | number | null>(null);
+  const { ngo_addToCart } = useCart();
 
-  const handleAddToCart = (tree: Tree) => {
-    const qty = quantities[tree.id] || 1;
-    addToCart({ id: tree.id, name: tree.name, img: tree.img, price: tree.price * 12 }, qty);
-    setAddedId(tree.id);
-    setTimeout(() => setAddedId(null), 1500);
+  const ngo_handleAddToCart = (tree: NgoTree) => {
+    const ngo_qty = ngo_quantities[tree.id] || 1;
+    ngo_addToCart({ id: tree.id, name: tree.name, img: tree.img, price: tree.price * 12 }, ngo_qty);
+    setNgoAddedId(tree.id);
+    setTimeout(() => setNgoAddedId(null), 1500);
   };
 
   useEffect(() => {
-    async function fetchTrees() {
+    async function ngo_fetchTrees() {
       try {
-        const res = await fetch("/api/trees");
-        if (!res.ok) { setLoading(false); return; }
-        const data = await res.json();
-        if (!Array.isArray(data)) { setLoading(false); return; }
-        const enhancedData = await Promise.all(data.map(async (t: Tree) => {
+        const ngo_res = await fetch("/api/trees");
+        if (!ngo_res.ok) { setNgoLoading(false); return; }
+        const ngo_data = await ngo_res.json();
+        if (!Array.isArray(ngo_data)) { setNgoLoading(false); return; }
+        const ngo_enhancedData = await Promise.all(ngo_data.map(async (t: NgoTree) => {
           try {
-            let q = t.name.trim();
-            let wikiRes = await fetch(`https://en.wikipedia.org/api/rest_v1/page/summary/${encodeURIComponent(q)}`);
-            if (!wikiRes.ok) {
-              q = t.name.replace(/Tree/ig, "").trim();
-              wikiRes = await fetch(`https://en.wikipedia.org/api/rest_v1/page/summary/${encodeURIComponent(q)}`);
+            let ngo_query = t.name.trim();
+            let ngo_wikiRes = await fetch(`https://en.wikipedia.org/api/rest_v1/page/summary/${encodeURIComponent(ngo_query)}`);
+            if (!ngo_wikiRes.ok) {
+              ngo_query = t.name.replace(/Tree/ig, "").trim();
+              ngo_wikiRes = await fetch(`https://en.wikipedia.org/api/rest_v1/page/summary/${encodeURIComponent(ngo_query)}`);
             }
-            if (wikiRes.ok) {
-              const wikiData = await wikiRes.json();
-              if (wikiData.thumbnail?.source) return { ...t, img: wikiData.thumbnail.source };
+            if (ngo_wikiRes.ok) {
+              const ngo_wikiData = await ngo_wikiRes.json();
+              if (ngo_wikiData.thumbnail?.source) return { ...t, img: ngo_wikiData.thumbnail.source };
             }
             return t;
           } catch { return t; }
         }));
-        setTrees(enhancedData);
+        setNgoTrees(ngo_enhancedData);
       } catch {
         // API unavailable — handled gracefully
       } finally {
-        setLoading(false);
+        setNgoLoading(false);
       }
     }
-    fetchTrees();
+    ngo_fetchTrees();
   }, []);
 
-  const toggleFilter = (f: string) =>
-    setActiveFilters((prev) => prev.includes(f) ? prev.filter((x) => x !== f) : [...prev, f]);
+  const ngo_toggleFilter = (f: string) =>
+    setNgoActiveFilters((prev) => prev.includes(f) ? prev.filter((x) => x !== f) : [...prev, f]);
 
-  const filteredTrees = trees
-    .filter((t) => activeFilters.includes(t.type))
+  const ngo_filteredTrees = ngo_trees
+    .filter((t) => ngo_activeFilters.includes(t.type))
     .sort((a, b) => {
-      if (sortBy === "price-low") return a.price - b.price;
-      if (sortBy === "price-high") return b.price - a.price;
+      if (ngo_sortBy === "price-low") return a.price - b.price;
+      if (ngo_sortBy === "price-high") return b.price - a.price;
       return 0;
     });
 
-  const updateQty = (id: string | number, delta: number) =>
-    setQuantities((prev) => ({ ...prev, [id]: Math.max(1, (prev[id] || 1) + delta) }));
+  const ngo_updateQty = (id: string | number, delta: number) =>
+    setNgoQuantities((prev) => ({ ...prev, [id]: Math.max(1, (prev[id] || 1) + delta) }));
 
-  const SkeletonCard = () => (
+  const NgoSkeletonCard = () => (
     <div className="bg-surface rounded-2xl border border-sand/50 overflow-hidden">
       <div className="h-52 bg-sand/40 anim-shimmer"></div>
       <div className="p-5 space-y-3">
@@ -146,11 +146,11 @@ export default function Marketplace() {
             { icon: GraduationCap, label: "Graduation", gradient: "from-sky-500/15 to-blue-500/15" },
             { icon: Baby, label: "New Baby", gradient: "from-pink-500/15 to-rose-500/15" },
           ].map((occ, i) => {
-            const OccIcon = occ.icon;
+            const NgoOccIcon = occ.icon;
             return (
               <motion.button whileHover={{ y: -2 }} key={i} className="flex-shrink-0 flex items-center gap-2.5 px-5 py-3 rounded-full bg-surface border border-sand/50 hover:border-emerald/20 hover:shadow-md transition-all duration-200 group">
                 <div className={`w-8 h-8 rounded-lg bg-gradient-to-br ${occ.gradient} flex items-center justify-center group-hover:scale-110 transition-transform`}>
-                  <OccIcon className="w-4 h-4 text-forest/70" />
+                  <NgoOccIcon className="w-4 h-4 text-forest/70" />
                 </div>
                 <span className="text-[13px] font-semibold text-forest whitespace-nowrap">{occ.label}</span>
               </motion.button>
@@ -169,19 +169,19 @@ export default function Marketplace() {
               </h3>
               <div className="space-y-3">
                 {["Fruit Bearing", "Medicinal", "Shade Giving"].map((filter) => {
-                  const Icon = typeIcons[filter] || Leaf;
+                  const NgoFilterIcon = ngo_typeIcons[filter] || Leaf;
                   return (
                     <label key={filter} className="flex items-center gap-3 cursor-pointer group">
                       <input
                         type="checkbox"
                         className="rounded border-sage text-emerald focus:ring-emerald/30 w-4 h-4 accent-emerald"
-                        checked={activeFilters.includes(filter)}
-                        onChange={() => toggleFilter(filter)}
+                        checked={ngo_activeFilters.includes(filter)}
+                        onChange={() => ngo_toggleFilter(filter)}
                       />
-                      <Icon className="w-4 h-4 text-earth group-hover:text-emerald transition-colors" />
+                      <NgoFilterIcon className="w-4 h-4 text-earth group-hover:text-emerald transition-colors" />
                       <span className="text-sm text-dark/70 group-hover:text-emerald transition-colors font-medium">{filter}</span>
                       <span className="ml-auto text-[11px] text-earth bg-cream rounded-full px-2 py-0.5 font-semibold">
-                        {trees.filter((t) => t.type === filter).length}
+                        {ngo_trees.filter((t) => t.type === filter).length}
                       </span>
                     </label>
                   );
@@ -217,12 +217,12 @@ export default function Marketplace() {
           <div className="flex items-center justify-between mb-6">
             <div>
               <h2 className="heading-serif text-2xl font-bold text-forest">Choose a Tree</h2>
-              <p className="text-sm text-earth mt-1 font-accent">{filteredTrees.length} trees available</p>
+              <p className="text-sm text-earth mt-1 font-accent">{ngo_filteredTrees.length} trees available</p>
             </div>
             <select
               className="bg-surface border border-sand/50 text-sm font-medium text-forest rounded-xl py-2 pl-4 pr-8 cursor-pointer hover:border-emerald/30 transition-colors focus:ring-1 focus:ring-emerald/30 focus:border-emerald focus:outline-none"
-              value={sortBy}
-              onChange={(e) => setSortBy(e.target.value)}
+              value={ngo_sortBy}
+              onChange={(e) => setNgoSortBy(e.target.value)}
             >
               <option value="recommended">Recommended</option>
               <option value="price-low">Price: Low → High</option>
@@ -230,24 +230,24 @@ export default function Marketplace() {
             </select>
           </div>
 
-          {loading ? (
+          {ngo_loading ? (
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5">
-              {[1, 2, 3, 4, 5, 6].map((i) => <SkeletonCard key={i} />)}
+              {[1, 2, 3, 4, 5, 6].map((i) => <NgoSkeletonCard key={i} />)}
             </div>
-          ) : filteredTrees.length === 0 ? (
+          ) : ngo_filteredTrees.length === 0 ? (
             <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="flex flex-col items-center justify-center h-64 text-earth bg-surface rounded-2xl border border-sand/50">
               <Search className="w-12 h-12 text-earth/30 mb-4" />
               <p className="font-bold text-lg text-forest">No trees match your filters</p>
               <p className="text-sm font-accent mb-4">Try adjusting the filters above</p>
-              <button onClick={() => setActiveFilters(["Fruit Bearing", "Medicinal", "Shade Giving"])} className="text-sm text-emerald font-bold hover:underline">
+              <button onClick={() => setNgoActiveFilters(["Fruit Bearing", "Medicinal", "Shade Giving"])} className="text-sm text-emerald font-bold hover:underline">
                 Reset all filters
               </button>
             </motion.div>
           ) : (
             <motion.div layout className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5">
               <AnimatePresence>
-                {filteredTrees.map((tree) => {
-                  const TypeIcon = typeIcons[tree.type] || Leaf;
+                {ngo_filteredTrees.map((tree) => {
+                  const NgoTypeIcon = ngo_typeIcons[tree.type] || Leaf;
                   return (
                     <motion.div
                       key={tree.id}
@@ -263,7 +263,7 @@ export default function Marketplace() {
                         <img src={tree.img} alt={tree.name} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" />
                         <div className="absolute top-3 left-3">
                           <span className="text-[11px] font-bold bg-surface/90 backdrop-blur-sm text-forest px-3 py-1.5 rounded-full border border-sand/50 flex items-center gap-1.5">
-                            <TypeIcon className="w-3 h-3 text-emerald" /> {tree.type}
+                            <NgoTypeIcon className="w-3 h-3 text-emerald" /> {tree.type}
                           </span>
                         </div>
                         <div className="absolute top-3 right-3">
@@ -288,34 +288,34 @@ export default function Marketplace() {
                         <div className="flex items-center gap-3 mb-4">
                           <span className="text-xs font-semibold text-earth font-accent">Qty:</span>
                           <div className="flex items-center border border-sand/50 rounded-lg overflow-hidden">
-                            <button className="px-3 py-1.5 text-sm hover:bg-cream transition-colors text-earth" onClick={() => updateQty(tree.id, -1)}><Minus className="w-3 h-3" /></button>
-                            <span className="px-3 py-1.5 text-sm font-bold border-x border-sand/50 min-w-[40px] text-center text-forest">{quantities[tree.id] || 1}</span>
-                            <button className="px-3 py-1.5 text-sm hover:bg-cream transition-colors text-earth" onClick={() => updateQty(tree.id, 1)}><Plus className="w-3 h-3" /></button>
+                            <button className="px-3 py-1.5 text-sm hover:bg-cream transition-colors text-earth" onClick={() => ngo_updateQty(tree.id, -1)}><Minus className="w-3 h-3" /></button>
+                            <span className="px-3 py-1.5 text-sm font-bold border-x border-sand/50 min-w-[40px] text-center text-forest">{ngo_quantities[tree.id] || 1}</span>
+                            <button className="px-3 py-1.5 text-sm hover:bg-cream transition-colors text-earth" onClick={() => ngo_updateQty(tree.id, 1)}><Plus className="w-3 h-3" /></button>
                           </div>
                           <span className="ml-auto font-black text-lg text-forest heading-serif">
-                            ₹{(tree.price * 12) * (quantities[tree.id] || 1)}
+                            ₹{(tree.price * 12) * (ngo_quantities[tree.id] || 1)}
                           </span>
                         </div>
 
                         <div className="mt-auto flex flex-col gap-2">
                           <motion.button
                             whileTap={{ scale: 0.95 }}
-                            onClick={() => handleAddToCart(tree)}
-                            disabled={addedId === tree.id}
+                            onClick={() => ngo_handleAddToCart(tree)}
+                            disabled={ngo_addedId === tree.id}
                             className={`w-full font-bold py-2.5 rounded-xl transition-all duration-300 flex items-center justify-center gap-2 text-sm ${
-                              addedId === tree.id
+                              ngo_addedId === tree.id
                                 ? "bg-emerald text-white cursor-not-allowed"
                                 : "bg-forest text-white hover:bg-gradient-gold shadow-md hover:shadow-lg"
                             }`}
                           >
-                            {addedId === tree.id ? (
+                            {ngo_addedId === tree.id ? (
                               <><Check className="w-4 h-4" /> Added to Cart</>
                             ) : (
                               <><ShoppingCart className="w-4 h-4" /> Add to Cart</>
                             )}
                           </motion.button>
                           <button
-                            onClick={() => setSelectedTree(tree.name)}
+                            onClick={() => setNgoSelectedTree(tree.name)}
                             className="w-full font-semibold py-2.5 rounded-xl bg-surface border border-sand/50 text-forest hover:bg-cream transition-colors text-sm flex items-center justify-center gap-2"
                           >
                             <Info className="w-4 h-4 text-earth" /> More Info
@@ -332,9 +332,9 @@ export default function Marketplace() {
       </div>
 
       <TreeInfoPopup 
-        isOpen={!!selectedTree} 
-        treeName={selectedTree} 
-        onClose={() => setSelectedTree(null)} 
+        isOpen={!!ngo_selectedTree} 
+        treeName={ngo_selectedTree} 
+        onClose={() => setNgoSelectedTree(null)} 
       />
     </div>
   );

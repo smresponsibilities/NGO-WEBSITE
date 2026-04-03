@@ -10,54 +10,54 @@ interface TreeInfoPopupProps {
 }
 
 export default function TreeInfoPopup({ treeName, isOpen, onClose }: TreeInfoPopupProps) {
-  const [description, setDescription] = useState<string>("");
-  const [loading, setLoading] = useState(false);
-  const [imageUrl, setImageUrl] = useState<string | null>(null);
+  const [ngo_description, setNgoDescription] = useState<string>("");
+  const [ngo_loading, setNgoLoading] = useState(false);
+  const [ngo_imageUrl, setNgoImageUrl] = useState<string | null>(null);
 
   useEffect(() => {
     if (!isOpen || !treeName) return;
 
-    let isMounted = true;
-    setLoading(true);
-    setDescription("");
-    setImageUrl(null);
+    let ngo_isMounted = true;
+    setNgoLoading(true);
+    setNgoDescription("");
+    setNgoImageUrl(null);
 
-    const fetchTreeInfo = async () => {
+    const ngo_fetchTreeInfo = async () => {
       try {
-        let queryName = treeName.trim();
-        console.log(queryName);
-        let res = await fetch(`https://en.wikipedia.org/api/rest_v1/page/summary/${encodeURIComponent(queryName)}`);
+        let ngo_queryName = treeName.trim();
+        console.log(ngo_queryName);
+        let ngo_wikiRes = await fetch(`https://en.wikipedia.org/api/rest_v1/page/summary/${encodeURIComponent(ngo_queryName)}`);
         
-        if (!res.ok) {
-          queryName = treeName.replace(/Tree/ig, "").trim();
-          console.log("Retrying with:", queryName);
-          res = await fetch(`https://en.wikipedia.org/api/rest_v1/page/summary/${encodeURIComponent(queryName)}`);
-          if (!res.ok) throw new Error("Not found");
+        if (!ngo_wikiRes.ok) {
+          ngo_queryName = treeName.replace(/Tree/ig, "").trim();
+          console.log("Retrying with:", ngo_queryName);
+          ngo_wikiRes = await fetch(`https://en.wikipedia.org/api/rest_v1/page/summary/${encodeURIComponent(ngo_queryName)}`);
+          if (!ngo_wikiRes.ok) throw new Error("Not found");
         }
         
-        const data = await res.json();
+        const ngo_wikiData = await ngo_wikiRes.json();
         
-        if (isMounted) {
-          if (data.type === "disambiguation" || !data.extract) {
+        if (ngo_isMounted) {
+          if (ngo_wikiData.type === "disambiguation" || !ngo_wikiData.extract) {
              throw new Error("Disambiguation or empty");
           }
-          setDescription(data.extract);
-          if (data.thumbnail?.source) {
-            setImageUrl(data.thumbnail.source);
+          setNgoDescription(ngo_wikiData.extract);
+          if (ngo_wikiData.thumbnail?.source) {
+            setNgoImageUrl(ngo_wikiData.thumbnail.source);
           }
-          setLoading(false);
+          setNgoLoading(false);
         }
       } catch (err) {
-        if (isMounted) {
-          setDescription(`The ${treeName} is an incredible species that contributes significantly to our environment. Trees like this are vital to our ecosystem, providing essential oxygen, improving local air quality, stabilizing soil, and supporting diverse wildlife. Planting a ${treeName} successfully helps restore nature's balance.`);
-          setLoading(false);
+        if (ngo_isMounted) {
+          setNgoDescription(`The ${treeName} is an incredible species that contributes significantly to our environment. Trees like this are vital to our ecosystem, providing essential oxygen, improving local air quality, stabilizing soil, and supporting diverse wildlife. Planting a ${treeName} successfully helps restore nature's balance.`);
+          setNgoLoading(false);
         }
       }
     };
 
-    fetchTreeInfo();
+    ngo_fetchTreeInfo();
 
-    return () => { isMounted = false; };
+    return () => { ngo_isMounted = false; };
   }, [treeName, isOpen]);
 
   if (!isOpen || !treeName) return null;
@@ -84,9 +84,9 @@ export default function TreeInfoPopup({ treeName, isOpen, onClose }: TreeInfoPop
         </button>
 
         <div className="flex flex-col items-center text-center gap-5 mt-2">
-          {imageUrl ? (
+          {ngo_imageUrl ? (
             <div className="size-24 rounded-full overflow-hidden border-4 border-[#34d399] shadow-lg">
-              <img src={imageUrl} alt={treeName} className="w-full h-full object-cover bg-white" />
+              <img src={ngo_imageUrl} alt={treeName} className="w-full h-full object-cover bg-white" />
             </div>
           ) : (
             <div className="size-24 rounded-full bg-[#34d399] flex items-center justify-center text-4xl shadow-lg border-4 border-white/5">
@@ -97,7 +97,7 @@ export default function TreeInfoPopup({ treeName, isOpen, onClose }: TreeInfoPop
           <div className="w-full">
             <h3 className="text-2xl font-bold font-serif text-white/90 mb-3">{treeName}</h3>
             
-            {loading ? (
+            {ngo_loading ? (
               <div className="space-y-3 animate-pulse mt-4">
                 <div className="h-3 bg-white/10 rounded w-full"></div>
                 <div className="h-3 bg-white/10 rounded w-5/6 mx-auto"></div>
@@ -105,7 +105,7 @@ export default function TreeInfoPopup({ treeName, isOpen, onClose }: TreeInfoPop
               </div>
             ) : (
               <p className="text-[#a0a0a0] text-sm leading-relaxed max-h-40 overflow-y-auto pr-2 custom-scrollbar">
-                {description}
+                {ngo_description}
               </p>
             )}
           </div>

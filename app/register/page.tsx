@@ -9,47 +9,47 @@ import { Mail, Lock, User, ArrowRight, Leaf, UserPlus } from "lucide-react";
 import { useAuth } from "../../components/AuthProvider";
 
 export default function Register() {
-  const [name, setName] = useState("");
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
-  const [error, setError] = useState("");
-  const [loading, setLoading] = useState(false);
-  const router = useRouter();
-  const { refresh } = useAuth();
+  const [ngo_name, setNgoName] = useState("");
+  const [ngo_email, setNgoEmail] = useState("");
+  const [ngo_password, setNgoPassword] = useState("");
+  const [ngo_error, setNgoError] = useState("");
+  const [ngo_loading, setNgoLoading] = useState(false);
+  const ngo_router = useRouter();
+  const { ngo_refresh } = useAuth();
 
-  const handleRegister = async (e: React.FormEvent) => {
+  const ngo_handleRegister = async (e: React.FormEvent) => {
     e.preventDefault();
-    setError("");
-    setLoading(true);
+    setNgoError("");
+    setNgoLoading(true);
 
     try {
-      const res = await fetch("/api/auth/signup", {
+      const ngo_res = await fetch("/api/auth/signup", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ name, email, password }),
+        body: JSON.stringify({ name: ngo_name, email: ngo_email, password: ngo_password }),
       });
-      const data = await res.json();
+      const ngo_data = await ngo_res.json();
       
-      if (!res.ok) {
-        toast.error(data.error || "Registration failed");
-        setError(data.error || "Registration failed");
-        setLoading(false);
+      if (!ngo_res.ok) {
+        toast.error(ngo_data.error || "Registration failed");
+        setNgoError(ngo_data.error || "Registration failed");
+        setNgoLoading(false);
         return;
       }
       
       toast.success("Account created! Welcome to Renukiran.");
-      refresh();
+      ngo_refresh();
       
-      if (data.user.role === "admin") {
-        router.push("/admin");
+      if (ngo_data.user.role === "admin") {
+        ngo_router.push("/admin");
       } else {
-        router.push("/dashboard");
+        ngo_router.push("/dashboard");
       }
-      router.refresh();
+      ngo_router.refresh();
     } catch {
       toast.error("Network error. Please try again.");
-      setError("Network error. Please try again.");
-      setLoading(false);
+      setNgoError("Network error. Please try again.");
+      setNgoLoading(false);
     }
   };
 
@@ -93,17 +93,17 @@ export default function Register() {
           <h1 className="heading-serif text-3xl font-black text-forest mb-2">Create account</h1>
           <p className="text-earth text-sm font-accent mb-8">Join us in planting trees and restoring nature across India.</p>
           
-          {error && (
+          {ngo_error && (
             <motion.div
               initial={{ opacity: 0, y: -10 }}
               animate={{ opacity: 1, y: 0 }}
               className="bg-red-50 text-red-500 font-medium p-3 rounded-xl text-sm mb-5 text-center border border-red-100"
             >
-              {error}
+              {ngo_error}
             </motion.div>
           )}
           
-          <form onSubmit={handleRegister} className="flex flex-col gap-4">
+          <form onSubmit={ngo_handleRegister} className="flex flex-col gap-4">
             <div>
               <label className="text-sm font-bold text-forest mb-2 block">Full Name</label>
               <div className="relative">
@@ -111,8 +111,8 @@ export default function Register() {
                 <input 
                   type="text" 
                   required 
-                  value={name}
-                  onChange={e => setName(e.target.value)}
+                  value={ngo_name}
+                  onChange={e => setNgoName(e.target.value)}
                   className="w-full rounded-xl bg-surface border border-sand/60 pl-10 pr-4 py-3 text-sm outline-none focus:border-emerald focus:ring-1 focus:ring-emerald/30 transition-all font-medium text-forest" 
                   placeholder="John Doe"
                 />
@@ -125,8 +125,8 @@ export default function Register() {
                 <input 
                   type="email" 
                   required 
-                  value={email}
-                  onChange={e => setEmail(e.target.value)}
+                  value={ngo_email}
+                  onChange={e => setNgoEmail(e.target.value)}
                   className="w-full rounded-xl bg-surface border border-sand/60 pl-10 pr-4 py-3 text-sm outline-none focus:border-emerald focus:ring-1 focus:ring-emerald/30 transition-all font-medium text-forest" 
                   placeholder="you@example.com"
                 />
@@ -139,8 +139,8 @@ export default function Register() {
                 <input 
                   type="password" 
                   required 
-                  value={password}
-                  onChange={e => setPassword(e.target.value)}
+                  value={ngo_password}
+                  onChange={e => setNgoPassword(e.target.value)}
                   className="w-full rounded-xl bg-surface border border-sand/60 pl-10 pr-4 py-3 text-sm outline-none focus:border-emerald focus:ring-1 focus:ring-emerald/30 transition-all font-medium text-forest" 
                   placeholder="••••••••"
                 />
@@ -150,10 +150,10 @@ export default function Register() {
               whileHover={{ scale: 1.01 }}
               whileTap={{ scale: 0.98 }}
               type="submit"
-              disabled={loading}
+              disabled={ngo_loading}
               className="mt-2 w-full font-bold py-3.5 rounded-xl bg-emerald text-white flex items-center justify-center gap-2 shadow-lg shadow-emerald/20 hover:shadow-xl hover:shadow-emerald/30 transition-all btn-glow disabled:opacity-50"
             >
-              {loading ? (
+              {ngo_loading ? (
                 <span className="w-5 h-5 border-2 border-white/30 border-t-white rounded-full animate-spin" />
               ) : (
                 <>

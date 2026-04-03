@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
-import dbConnect from "../../../../lib/mongodb";
+import ngo_dbConnect from "../../../../lib/mongodb";
 import Order from "../../../../models/Order";
 import User from "../../../../models/User";
 
@@ -9,14 +9,14 @@ export async function GET(
 ) {
   try {
     const { orderId } = await params;
-    await dbConnect();
+    await ngo_dbConnect();
 
-    const order = await Order.findById(orderId).lean();
-    if (!order) {
+    const ngo_order = await Order.findById(orderId).lean();
+    if (!ngo_order) {
       return NextResponse.json({ error: "Order not found" }, { status: 404 });
     }
 
-    if (!(order as any).certificateValidated) {
+    if (!(ngo_order as any).certificateValidated) {
       return NextResponse.json(
         { error: "Certificate has not been validated yet" },
         { status: 403 }
@@ -24,22 +24,22 @@ export async function GET(
     }
 
     // Get user info
-    const user = await User.findById((order as any).userId).lean();
-    const userName = (user as any)?.name || "Valued Supporter";
+    const ngo_orderUser = await User.findById((ngo_order as any).userId).lean();
+    const ngo_userName = (ngo_orderUser as any)?.name || "Valued Supporter";
 
-    let certificateId = (order as any).certificateId;
-    if (!certificateId) {
-      certificateId = 'RK-' + require('crypto').randomBytes(4).toString('hex').toUpperCase();
-      await Order.findByIdAndUpdate(orderId, { certificateId });
+    let ngo_certificateId = (ngo_order as any).certificateId;
+    if (!ngo_certificateId) {
+      ngo_certificateId = 'RK-' + require('crypto').randomBytes(4).toString('hex').toUpperCase();
+      await Order.findByIdAndUpdate(orderId, { certificateId: ngo_certificateId });
     }
 
     return NextResponse.json({
-      certificateId,
-      userName,
-      trees: (order as any).trees,
-      totalAmount: (order as any).totalAmount,
-      createdAt: (order as any).createdAt,
-      razorpayOrderId: (order as any).razorpayOrderId,
+      certificateId: ngo_certificateId,
+      userName: ngo_userName,
+      trees: (ngo_order as any).trees,
+      totalAmount: (ngo_order as any).totalAmount,
+      createdAt: (ngo_order as any).createdAt,
+      razorpayOrderId: (ngo_order as any).razorpayOrderId,
     });
   } catch (error) {
     console.error("Certificate API Error:", error);

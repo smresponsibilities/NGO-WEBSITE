@@ -5,7 +5,7 @@ import { motion } from "framer-motion";
 import { Eye, Recycle, Users, CheckCircle, Leaf, ArrowRight, Shield, Award, Globe, Linkedin, Twitter, Mail } from "lucide-react";
 import SectionReveal, { StaggerContainer, StaggerItem } from "../../components/SectionReveal";
 
-const timeline = [
+const ngo_timeline = [
   { year: "2015", title: "Foundation Born", desc: "Renukiran Welfare Foundation started with a vision to bridge social welfare and environmental action." },
   { year: "2017", title: "First 10,000 Trees", desc: "First milestone — 10,000 trees planted across Rajasthan's arid landscapes." },
   { year: "2019", title: "CSR Launch", desc: "Launched corporate partnerships. 15 companies joined as CSR plantation partners." },
@@ -14,14 +14,14 @@ const timeline = [
   { year: "2026", title: "Scaling to 10M", desc: "Targeting 10 million trees by 2030 with Miyawaki, mangrove, and agroforestry expansion." },
 ];
 
-const values = [
+const ngo_values = [
   { icon: Eye, title: "Transparency", desc: "Every tree GPS-tagged with geo-tagged photos. Verify your impact in real-time." },
   { icon: Recycle, title: "Sustainability", desc: "3 years of care for every tree. 92%+ survival rate across all projects." },
   { icon: Users, title: "Community", desc: "Creating livelihoods for rural communities while restoring landscapes." },
   { icon: CheckCircle, title: "Accountability", desc: "Audit-ready reports, quarterly updates, and 100% fund utilization." },
 ];
 
-const team = [
+const ngo_team = [
   { name: "Renu Sharma", role: "Founder & CEO", desc: "15+ years in social welfare and environmental activism.", gradient: "from-emerald to-primary-light" },
   { name: "Amit Verma", role: "Head of Operations", desc: "Manages 150+ plantation locations across India.", gradient: "from-sky-500 to-blue-500" },
   { name: "Priya Bose", role: "CSR Partnerships", desc: "Connects corporates with impactful plantation initiatives.", gradient: "from-violet-500 to-purple-500" },
@@ -103,7 +103,7 @@ export default function Mission() {
             <h2 className="heading-serif text-3xl md:text-4xl font-black text-forest">Our Core Values</h2>
           </SectionReveal>
           <StaggerContainer className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5">
-            {values.map((v, i) => (
+            {ngo_values.map((v, i) => (
               <StaggerItem key={i}>
                 <motion.div whileHover={{ y: -6 }} className="flex flex-col items-center text-center gap-4 p-8 rounded-2xl bg-cream/60 backdrop-blur-sm border border-transparent hover:border-emerald/10 hover:shadow-lg transition-all group">
                   <div className="w-14 h-14 rounded-2xl bg-gradient-to-br from-emerald/10 to-primary-light/10 flex items-center justify-center group-hover:scale-110 transition-transform">
@@ -128,7 +128,7 @@ export default function Mission() {
           </SectionReveal>
           <div className="relative">
             <div className="absolute left-6 top-0 bottom-0 w-0.5 bg-gradient-to-b from-emerald via-emerald/50 to-emerald/10"></div>
-            {timeline.map((item, i) => (
+            {ngo_timeline.map((item, i) => (
               <motion.div
                 key={i}
                 initial={{ opacity: 0, x: -30 }}
@@ -163,7 +163,7 @@ export default function Mission() {
             <h2 className="heading-serif text-3xl md:text-4xl font-black text-forest">The People Behind the Trees</h2>
           </SectionReveal>
           <StaggerContainer className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5">
-            {team.map((p, i) => (
+            {ngo_team.map((p, i) => (
               <StaggerItem key={i}>
                 <motion.div
                   whileHover={{ y: -6 }}

@@ -11,35 +11,35 @@ interface TiltCardProps {
 }
 
 export default function TiltCard({ children, className = "", tiltDegree = 4, glare = true }: TiltCardProps) {
-  const ref = useRef<HTMLDivElement>(null);
-  const [transform, setTransform] = useState({ rotateX: 0, rotateY: 0, glareX: 50, glareY: 50 });
+  const ngo_ref = useRef<HTMLDivElement>(null);
+  const [ngo_transform, setNgoTransform] = useState({ rotateX: 0, rotateY: 0, glareX: 50, glareY: 50 });
 
-  const handleMouseMove = (e: React.MouseEvent) => {
-    if (!ref.current) return;
-    const rect = ref.current.getBoundingClientRect();
-    const x = (e.clientX - rect.left) / rect.width;
-    const y = (e.clientY - rect.top) / rect.height;
-    setTransform({
-      rotateX: (y - 0.5) * -tiltDegree * 2,
-      rotateY: (x - 0.5) * tiltDegree * 2,
-      glareX: x * 100,
-      glareY: y * 100,
+  const ngo_handleMouseMove = (e: React.MouseEvent) => {
+    if (!ngo_ref.current) return;
+    const ngo_rect = ngo_ref.current.getBoundingClientRect();
+    const ngo_x = (e.clientX - ngo_rect.left) / ngo_rect.width;
+    const ngo_y = (e.clientY - ngo_rect.top) / ngo_rect.height;
+    setNgoTransform({
+      rotateX: (ngo_y - 0.5) * -tiltDegree * 2,
+      rotateY: (ngo_x - 0.5) * tiltDegree * 2,
+      glareX: ngo_x * 100,
+      glareY: ngo_y * 100,
     });
   };
 
-  const handleMouseLeave = () => {
-    setTransform({ rotateX: 0, rotateY: 0, glareX: 50, glareY: 50 });
+  const ngo_handleMouseLeave = () => {
+    setNgoTransform({ rotateX: 0, rotateY: 0, glareX: 50, glareY: 50 });
   };
 
   return (
     <motion.div
-      ref={ref}
+      ref={ngo_ref}
       className={`relative overflow-hidden ${className}`}
-      onMouseMove={handleMouseMove}
-      onMouseLeave={handleMouseLeave}
+      onMouseMove={ngo_handleMouseMove}
+      onMouseLeave={ngo_handleMouseLeave}
       animate={{
-        rotateX: transform.rotateX,
-        rotateY: transform.rotateY,
+        rotateX: ngo_transform.rotateX,
+        rotateY: ngo_transform.rotateY,
       }}
       transition={{ type: "spring", stiffness: 300, damping: 30 }}
       style={{ perspective: 800, transformStyle: "preserve-3d" }}
@@ -49,8 +49,8 @@ export default function TiltCard({ children, className = "", tiltDegree = 4, gla
         <div
           className="absolute inset-0 pointer-events-none transition-opacity duration-300 rounded-inherit"
           style={{
-            background: `radial-gradient(circle at ${transform.glareX}% ${transform.glareY}%, rgba(255,255,255,0.12) 0%, rgba(255,255,255,0) 60%)`,
-            opacity: transform.rotateX !== 0 || transform.rotateY !== 0 ? 1 : 0,
+            background: `radial-gradient(circle at ${ngo_transform.glareX}% ${ngo_transform.glareY}%, rgba(255,255,255,0.12) 0%, rgba(255,255,255,0) 60%)`,
+            opacity: ngo_transform.rotateX !== 0 || ngo_transform.rotateY !== 0 ? 1 : 0,
           }}
         />
       )}

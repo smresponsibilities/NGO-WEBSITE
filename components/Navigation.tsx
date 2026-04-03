@@ -8,7 +8,7 @@ import { ShoppingCart, User, Leaf, Menu, X } from "lucide-react";
 import { useCart } from "./CartProvider";
 import { useAuth } from "./AuthProvider";
 
-const navLinks = [
+const ngo_navLinks = [
   { href: "/", label: "Home" },
   { href: "/marketplace", label: "Plant a Tree" },
   { href: "/tracking", label: "Our Impact" },
@@ -17,27 +17,27 @@ const navLinks = [
 ];
 
 export default function Navigation() {
-  const pathname = usePathname();
-  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+  const ngo_pathname = usePathname();
+  const [ngo_mobileMenuOpen, setNgoMobileMenuOpen] = useState(false);
   const { cartItems, setIsCartOpen } = useCart();
-  const totalItems = cartItems.reduce((acc, item) => acc + item.quantity, 0);
-  const [scrolled, setScrolled] = useState(false);
+  const ngo_totalItems = cartItems.reduce((acc, item) => acc + item.quantity, 0);
+  const [ngo_scrolled, setNgoScrolled] = useState(false);
   const { user } = useAuth();
 
   useEffect(() => {
-    const handleScroll = () => setScrolled(window.scrollY > 20);
-    window.addEventListener("scroll", handleScroll);
-    return () => window.removeEventListener("scroll", handleScroll);
+    const ngo_handleScroll = () => setNgoScrolled(window.scrollY > 20);
+    window.addEventListener("scroll", ngo_handleScroll);
+    return () => window.removeEventListener("scroll", ngo_handleScroll);
   }, []);
 
   useEffect(() => {
-    setMobileMenuOpen(false);
-  }, [pathname]);
+    setNgoMobileMenuOpen(false);
+  }, [ngo_pathname]);
 
   return (
     <motion.header
       className={`sticky top-0 z-50 w-full transition-all duration-500 ${
-        scrolled
+        ngo_scrolled
           ? "glass shadow-lg shadow-forest/8 border-b border-forest/10"
           : "bg-cream border-b border-sand/60"
       }`}
@@ -46,7 +46,7 @@ export default function Navigation() {
       transition={{ duration: 0.6, ease: [0.25, 0.4, 0.25, 1] }}
     >
       <div className={`mx-auto flex items-center justify-between px-5 sm:px-6 lg:px-8 max-w-7xl transition-all duration-500 ${
-        scrolled ? "h-[60px]" : "h-[72px]"
+        ngo_scrolled ? "h-[60px]" : "h-[72px]"
       }`}>
         {/* Logo */}
         <Link href="/" className="flex items-center gap-3 group">
@@ -66,15 +66,15 @@ export default function Navigation() {
 
         {/* Desktop Nav */}
         <nav className="hidden lg:flex items-center gap-1">
-          {navLinks.map((link) => {
-            const isActive = pathname === link.href;
+          {ngo_navLinks.map((link) => {
+            const ngo_isActive = ngo_pathname === link.href;
             return (
               <Link
                 key={link.href}
                 href={link.href}
                 className="relative text-[13px] font-semibold px-4 py-2 rounded-full transition-colors duration-300"
               >
-                {isActive && (
+                {ngo_isActive && (
                   <motion.span
                     layoutId="nav-pill"
                     className="absolute inset-0 bg-emerald/10 rounded-full"
@@ -82,11 +82,11 @@ export default function Navigation() {
                   />
                 )}
                 <span className={`relative z-10 ${
-                  isActive ? "text-emerald" : "text-dark/60 hover:text-emerald"
+                  ngo_isActive ? "text-emerald" : "text-dark/60 hover:text-emerald"
                 }`}>
                   {link.label}
                 </span>
-                {isActive && (
+                {ngo_isActive && (
                   <motion.span
                     layoutId="nav-dot"
                     className="absolute -bottom-0.5 left-1/2 -translate-x-1/2 w-1 h-1 bg-emerald rounded-full"
@@ -108,14 +108,14 @@ export default function Navigation() {
           >
             <ShoppingCart className="w-[18px] h-[18px]" />
             <AnimatePresence>
-              {totalItems > 0 && (
+              {ngo_totalItems > 0 && (
                 <motion.span
                   initial={{ scale: 0 }}
                   animate={{ scale: 1 }}
                   exit={{ scale: 0 }}
                   className="absolute -top-1 -right-1 flex h-4.5 w-4.5 items-center justify-center rounded-full bg-accent text-[9px] font-bold text-white shadow-sm"
                 >
-                  {totalItems}
+                  {ngo_totalItems}
                 </motion.span>
               )}
             </AnimatePresence>
@@ -154,11 +154,11 @@ export default function Navigation() {
           <motion.button
             whileTap={{ scale: 0.9 }}
             className="lg:hidden p-2 text-dark hover:text-emerald rounded-xl hover:bg-emerald/5 transition-all"
-            onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
+            onClick={() => setNgoMobileMenuOpen(!ngo_mobileMenuOpen)}
             aria-label="Toggle menu"
           >
             <AnimatePresence mode="wait">
-              {mobileMenuOpen ? (
+              {ngo_mobileMenuOpen ? (
                 <motion.div key="close" initial={{ rotate: -90, opacity: 0 }} animate={{ rotate: 0, opacity: 1 }} exit={{ rotate: 90, opacity: 0 }} transition={{ duration: 0.2 }}>
                   <X className="w-6 h-6" />
                 </motion.div>
@@ -174,7 +174,7 @@ export default function Navigation() {
 
       {/* Mobile Menu */}
       <AnimatePresence>
-        {mobileMenuOpen && (
+        {ngo_mobileMenuOpen && (
           <motion.nav
             initial={{ height: 0, opacity: 0 }}
             animate={{ height: "auto", opacity: 1 }}
@@ -183,8 +183,8 @@ export default function Navigation() {
             className="lg:hidden overflow-hidden bg-cream/95 backdrop-blur-xl border-t border-sand/50"
           >
             <div className="flex flex-col gap-1 px-5 pb-5 pt-3">
-              {navLinks.map((link, i) => {
-                const isActive = pathname === link.href;
+              {ngo_navLinks.map((link, i) => {
+                const ngo_isActive = ngo_pathname === link.href;
                 return (
                   <motion.div
                     key={link.href}
@@ -195,7 +195,7 @@ export default function Navigation() {
                     <Link
                       href={link.href}
                       className={`text-[14px] font-semibold px-4 py-3.5 rounded-xl transition-all block ${
-                        isActive
+                        ngo_isActive
                           ? "text-emerald bg-emerald/8 font-bold"
                           : "text-dark/60 hover:text-emerald hover:bg-emerald/5"
                       }`}
@@ -209,18 +209,18 @@ export default function Navigation() {
               <motion.button
                 initial={{ opacity: 0, x: -20 }}
                 animate={{ opacity: 1, x: 0 }}
-                transition={{ delay: navLinks.length * 0.05 }}
+                transition={{ delay: ngo_navLinks.length * 0.05 }}
                 onClick={() => setIsCartOpen(true)}
                 className="mt-2 text-[14px] font-semibold px-4 py-3.5 rounded-xl text-left text-dark/60 hover:text-emerald hover:bg-emerald/5 flex items-center gap-2"
               >
                 <ShoppingCart className="w-4 h-4" />
-                View Cart {totalItems > 0 ? `(${totalItems})` : ""}
+                View Cart {ngo_totalItems > 0 ? `(${ngo_totalItems})` : ""}
               </motion.button>
 
               <motion.div
                 initial={{ opacity: 0, x: -20 }}
                 animate={{ opacity: 1, x: 0 }}
-                transition={{ delay: (navLinks.length + 1) * 0.05 }}
+                transition={{ delay: (ngo_navLinks.length + 1) * 0.05 }}
               >
                 <Link
                   href={user ? (user.role === "admin" ? "/admin" : "/dashboard") : "/login"}
@@ -234,7 +234,7 @@ export default function Navigation() {
               <motion.div
                 initial={{ opacity: 0, y: 10 }}
                 animate={{ opacity: 1, y: 0 }}
-                transition={{ delay: (navLinks.length + 2) * 0.05 }}
+                transition={{ delay: (ngo_navLinks.length + 2) * 0.05 }}
               >
                 <Link
                   href="/marketplace"

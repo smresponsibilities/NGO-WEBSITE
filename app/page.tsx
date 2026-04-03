@@ -8,7 +8,7 @@ import AnimatedCounter from "../components/AnimatedCounter";
 import ParticleField from "../components/ParticleField";
 import Marquee from "../components/Marquee";
 
-const testimonials = [
+const ngo_testimonials = [
   { name: "Priya Sharma", location: "Mumbai", text: "Planted 10 trees for my daughter's birthday. Received GPS coordinates and beautiful certificates! Truly transparent.", rating: 5 },
   { name: "Rahul Verma", location: "Delhi", text: "Our company partnered with Renukiran for CSR. The audit-ready reports and real impact tracking are exceptional.", rating: 5 },
   { name: "Anita Krishnan", location: "Bangalore", text: "Gifted trees to memorialize my grandmother. The team was compassionate, and I can see the trees growing through updates.", rating: 5 },
@@ -17,7 +17,7 @@ const testimonials = [
   { name: "Arjun Reddy", location: "Hyderabad", text: "The digital certificate for each tree is beautifully designed. Makes for a perfect green gift.", rating: 5 },
 ];
 
-const focusAreas = [
+const ngo_focusAreas = [
   { title: "Agroforestry", desc: "Empowering farmers with sustainable agriculture and tree planting.", icon: Sprout, image: "https://images.unsplash.com/photo-1625246333195-78d9c38ad449?auto=format&fit=crop&q=80&w=600" },
   { title: "Miyawaki Forests", desc: "Dense, native forests in urban areas — 30x denser, 10x faster.", icon: Trees, image: "https://images.unsplash.com/photo-1448375240586-882707db888b?auto=format&fit=crop&q=80&w=600" },
   { title: "Mangrove Restoration", desc: "Protecting coastal ecosystems and marine biodiversity.", icon: Droplets, image: "https://images.unsplash.com/photo-1569163139394-de4e4f43e4e3?auto=format&fit=crop&q=80&w=600" },
@@ -26,7 +26,7 @@ const focusAreas = [
   { title: "Food Forests", desc: "Self-sustaining ecosystems that provide continuous edible harvests.", icon: TreePine, image: "https://images.unsplash.com/photo-1464822759023-fed622ff2c3b?auto=format&fit=crop&q=80&w=600" },
 ];
 
-const occasions = [
+const ngo_occasions = [
   { icon: Cake, label: "Birthday", color: "from-pink-500/20 to-rose-500/20" },
   { icon: Flower2, label: "Mother", color: "from-purple-500/20 to-fuchsia-500/20" },
   { icon: Gift, label: "Gift", color: "from-emerald/20 to-green-500/20" },
@@ -278,7 +278,7 @@ export default function Home() {
           </SectionReveal>
 
           <StaggerContainer className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-4">
-            {occasions.map((item, i) => (
+            {ngo_occasions.map((item, i) => (
               <StaggerItem key={i}>
                 <motion.div whileHover={{ y: -8, scale: 1.02 }} transition={{ type: "spring", stiffness: 300 }}>
                   <Link href="/marketplace" className="group flex flex-col items-center gap-4 p-6 rounded-2xl bg-surface/80 backdrop-blur-sm border border-sand/50 hover:shadow-xl hover:border-accent/20 transition-all duration-300">
@@ -305,7 +305,7 @@ export default function Home() {
           </SectionReveal>
 
           <StaggerContainer className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5">
-            {focusAreas.map((area, i) => (
+            {ngo_focusAreas.map((area, i) => (
               <StaggerItem key={i}>
                 <motion.div
                   whileHover={{ y: -6 }}
@@ -343,7 +343,7 @@ export default function Home() {
         </div>
 
         <Marquee speed={40} pauseOnHover>
-          {testimonials.map((t, i) => (
+          {ngo_testimonials.map((t, i) => (
             <div
               key={i}
               className="flex-shrink-0 w-[340px] flex flex-col gap-4 rounded-2xl bg-surface/90 backdrop-blur-sm p-6 border border-sand/50 shadow-sm hover:shadow-lg hover:border-accent/20 transition-all duration-300"

@@ -1,42 +1,41 @@
 import { NextResponse } from "next/server";
-import dbConnect from "../../../../lib/mongodb";
+import ngo_dbConnect from "../../../../lib/mongodb";
 import User from "../../../../models/User";
 import bcrypt from "bcryptjs";
-import { signToken } from "../../../../utils/auth";
+import { ngo_signToken } from "../../../../utils/auth";
 
 export async function POST(req: Request) {
   try {
-    await dbConnect();
+    await ngo_dbConnect();
     const { name, email, password } = await req.json();
 
     if (!name || !email || !password) {
       return NextResponse.json({ error: "Missing fields" }, { status: 400 });
     }
 
-    const existingUser = await User.findOne({ email });
-    if (existingUser) {
+    const ngo_existingUser = await User.findOne({ email });
+    if (ngo_existingUser) {
       return NextResponse.json({ error: "User already exists" }, { status: 400 });
     }
 
-    const hashedPassword = await bcrypt.hash(password, 10);
+    const ngo_hashedPassword = await bcrypt.hash(password, 10);
     
-    const user = await User.create({
-      name, email, password: hashedPassword, role: "user"
+    const ngo_newUser = await User.create({
+      name, email, password: ngo_hashedPassword, role: "user"
     });
 
-    const token = await signToken({ userId: user._id.toString(), role: user.role });
+    const ngo_token = await ngo_signToken({ userId: ngo_newUser._id.toString(), role: ngo_newUser.role });
     
-    // Returning headers correctly using unified NextResponse syntax
-    const response = NextResponse.json({ success: true, user: { name: user.name, email: user.email, role: user.role } });
-    response.cookies.set({
+    const ngo_response = NextResponse.json({ success: true, user: { name: ngo_newUser.name, email: ngo_newUser.email, role: ngo_newUser.role } });
+    ngo_response.cookies.set({
       name: "auth_token",
-      value: token,
+      value: ngo_token,
       httpOnly: true,
       path: "/",
       maxAge: 86400
     });
     
-    return response;
+    return ngo_response;
   } catch (error: any) {
     return NextResponse.json({ error: error.message }, { status: 500 });
   }

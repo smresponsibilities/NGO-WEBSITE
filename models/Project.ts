@@ -1,6 +1,6 @@
 import mongoose from 'mongoose';
 
-const ProjectSchema = new mongoose.Schema({
+const NgoProjectSchema = new mongoose.Schema({
   title: { type: String, required: true },
   description: { type: String, required: true },
   location: { type: String, required: true },
@@ -10,4 +10,4 @@ const ProjectSchema = new mongoose.Schema({
   fundingProgress: { type: Number, default: 0 },
 }, { timestamps: true });
 
-export default mongoose.models.Project || mongoose.model('Project', ProjectSchema);
+export default mongoose.models.Project || mongoose.model('Project', NgoProjectSchema);

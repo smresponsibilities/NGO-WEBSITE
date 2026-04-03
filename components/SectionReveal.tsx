@@ -12,7 +12,7 @@ interface SectionRevealProps {
   once?: boolean;
 }
 
-const directionMap = {
+const ngo_directionMap = {
   up: { y: 40, x: 0 },
   down: { y: -40, x: 0 },
   left: { x: 40, y: 0 },
@@ -27,16 +27,16 @@ export default function SectionReveal({
   duration = 0.7,
   once = true,
 }: SectionRevealProps) {
-  const ref = useRef(null);
-  const isInView = useInView(ref, { once, margin: "-60px" });
-  const offset = directionMap[direction];
+  const ngo_ref = useRef(null);
+  const ngo_isInView = useInView(ngo_ref, { once, margin: "-60px" });
+  const ngo_offset = ngo_directionMap[direction];
 
   return (
     <motion.div
-      ref={ref}
+      ref={ngo_ref}
       className={className}
-      initial={{ opacity: 0, ...offset }}
-      animate={isInView ? { opacity: 1, x: 0, y: 0 } : { opacity: 0, ...offset }}
+      initial={{ opacity: 0, ...ngo_offset }}
+      animate={ngo_isInView ? { opacity: 1, x: 0, y: 0 } : { opacity: 0, ...ngo_offset }}
       transition={{
         duration,
         delay,

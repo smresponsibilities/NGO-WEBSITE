@@ -6,34 +6,34 @@ import { motion, AnimatePresence } from "framer-motion";
 import { Trees, ShoppingBag, Users, Building2, MapPin, TrendingUp, Phone, Mail, Leaf, ArrowRight, CheckCircle, BarChart3, FileText, ChevronRight } from "lucide-react";
 import SectionReveal, { StaggerContainer, StaggerItem } from "../../components/SectionReveal";
 
-const csrServices = [
+const ngo_csrServices = [
   { icon: Trees, title: "CSR Tree Plantation", desc: "End-to-end plantation initiatives with transparent tracking, GPS tagging, and audit-ready reports.", features: ["Geo-tagged trees", "Quarterly reports", "Tax benefits under 80G"] },
   { icon: ShoppingBag, title: "D2C Sustainability", desc: "Empower your D2C brand with carbon-neutral operations and eco-first packaging solutions.", features: ["Carbon-neutral shipping", "Green brand stories", "Consumer trust badges"] },
   { icon: Users, title: "Employee Engagement", desc: "Team plantation drives that build culture, create ESG value, and genuinely improve the environment.", features: ["Virtual plantation events", "Individual certificates", "Impact dashboards"] },
 ];
 
 export default function CSR() {
-  const [formStep, setFormStep] = useState(0);
-  const [formData, setFormData] = useState({ company: "", email: "", phone: "", trees: "", message: "" });
-  const [submitted, setSubmitted] = useState(false);
-  const [partners, setPartners] = useState<any[]>([]);
+  const [ngo_formStep, setNgoFormStep] = useState(0);
+  const [ngo_formData, setNgoFormData] = useState({ company: "", email: "", phone: "", trees: "", message: "" });
+  const [ngo_submitted, setNgoSubmitted] = useState(false);
+  const [ngo_partners, setNgoPartners] = useState<any[]>([]);
 
   useEffect(() => {
     fetch("/api/partners", { cache: "no-store" })
       .then((res) => res.json())
-      .then((json) => { if (json.data) setPartners(json.data); })
+      .then((json) => { if (json.data) setNgoPartners(json.data); })
       .catch(() => {});
   }, []);
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const ngo_handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    setSubmitted(true);
-    setTimeout(() => { setSubmitted(false); setFormStep(0); }, 5000);
-    setFormData({ company: "", email: "", phone: "", trees: "", message: "" });
+    setNgoSubmitted(true);
+    setTimeout(() => { setNgoSubmitted(false); setNgoFormStep(0); }, 5000);
+    setNgoFormData({ company: "", email: "", phone: "", trees: "", message: "" });
   };
 
-  const nextStep = () => setFormStep((prev) => Math.min(prev + 1, 2));
-  const prevStep = () => setFormStep((prev) => Math.max(prev - 1, 0));
+  const ngo_nextStep = () => setNgoFormStep((prev) => Math.min(prev + 1, 2));
+  const ngo_prevStep = () => setNgoFormStep((prev) => Math.max(prev - 1, 0));
 
   return (
     <main className="flex-1 w-full">
@@ -83,12 +83,12 @@ export default function CSR() {
       </section>
 
       {/* Partners */}
-      {partners.length > 0 && (
+      {ngo_partners.length > 0 && (
         <section className="py-12 border-t border-b border-sand/50 bg-white">
           <div className="max-w-[1280px] mx-auto px-5 text-center">
             <p className="text-xs font-bold text-earth uppercase tracking-[0.15em] mb-8 font-accent">Trusted by industry leaders</p>
             <div className="flex flex-wrap justify-center items-center gap-10 md:gap-16 opacity-70">
-              {partners.map((p) => (
+              {ngo_partners.map((p) => (
                 <motion.div key={p._id} whileHover={{ scale: 1.05 }} className="flex flex-col items-center gap-2 group cursor-default grayscale hover:grayscale-0 transition-all">
                   <img src={p.logoUrl} alt={p.companyName} className="h-10 md:h-14 object-contain max-w-[140px]" />
                   <span className="text-[10px] font-bold text-accent px-2 py-0.5 bg-accent/10 rounded-full opacity-0 group-hover:opacity-100 transition-opacity font-accent">
@@ -138,7 +138,7 @@ export default function CSR() {
             <h2 className="heading-serif text-3xl md:text-4xl font-black text-forest">Tailored solutions for your CSR goals</h2>
           </SectionReveal>
           <StaggerContainer className="grid grid-cols-1 md:grid-cols-3 gap-6">
-            {csrServices.map((s, i) => (
+            {ngo_csrServices.map((s, i) => (
               <StaggerItem key={i}>
                 <motion.div whileHover={{ y: -6 }} className="flex flex-col gap-5 rounded-2xl bg-surface p-8 border border-sand/50 shadow-sm hover:shadow-xl hover:border-emerald/15 transition-all duration-300 group h-full">
                   <div className="w-14 h-14 rounded-2xl bg-gradient-to-br from-emerald/10 to-primary-light/10 flex items-center justify-center group-hover:scale-110 transition-transform">
@@ -200,7 +200,7 @@ export default function CSR() {
             <p className="text-earth text-sm font-accent">Our CSR team will respond within 24 hours.</p>
           </SectionReveal>
 
-          {submitted ? (
+          {ngo_submitted ? (
             <motion.div initial={{ opacity: 0, scale: 0.95 }} animate={{ opacity: 1, scale: 1 }} className="text-center p-12 rounded-2xl bg-emerald/5 border border-emerald/15">
               <CheckCircle className="w-12 h-12 text-emerald mx-auto mb-4" />
               <h3 className="heading-serif text-2xl font-bold text-forest mb-2">Thank You!</h3>
@@ -212,48 +212,48 @@ export default function CSR() {
               <div className="flex items-center gap-2 mb-8">
                 {[0, 1, 2].map((step) => (
                   <div key={step} className="flex-1 flex items-center gap-2">
-                    <div className={`w-8 h-8 rounded-full flex items-center justify-center text-xs font-bold transition-all ${formStep >= step ? "bg-emerald text-white" : "bg-cream text-earth border border-sand/50"}`}>
-                      {formStep > step ? <CheckCircle className="w-4 h-4" /> : step + 1}
+                    <div className={`w-8 h-8 rounded-full flex items-center justify-center text-xs font-bold transition-all ${ngo_formStep >= step ? "bg-emerald text-white" : "bg-cream text-earth border border-sand/50"}`}>
+                      {ngo_formStep > step ? <CheckCircle className="w-4 h-4" /> : step + 1}
                     </div>
-                    {step < 2 && <div className={`flex-1 h-0.5 rounded-full transition-all ${formStep > step ? "bg-emerald" : "bg-sand/50"}`}></div>}
+                    {step < 2 && <div className={`flex-1 h-0.5 rounded-full transition-all ${ngo_formStep > step ? "bg-emerald" : "bg-sand/50"}`}></div>}
                   </div>
                 ))}
               </div>
 
-              <form onSubmit={handleSubmit}>
+              <form onSubmit={ngo_handleSubmit}>
                 <AnimatePresence mode="wait">
-                  {formStep === 0 && (
+                  {ngo_formStep === 0 && (
                     <motion.div key="step0" initial={{ opacity: 0, x: 20 }} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 0, x: -20 }} className="space-y-5">
                       <h3 className="text-lg font-bold text-forest">Company Information</h3>
                       <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
                         <div>
                           <label className="block text-sm font-bold text-forest mb-2">Company Name *</label>
-                          <input type="text" required className="w-full rounded-xl border border-sand/50 bg-cream px-4 py-3 text-sm focus:border-emerald focus:ring-1 focus:ring-emerald/30 focus:outline-none transition-colors" placeholder="Your company" value={formData.company} onChange={(e) => setFormData({...formData, company: e.target.value})} />
+                          <input type="text" required className="w-full rounded-xl border border-sand/50 bg-cream px-4 py-3 text-sm focus:border-emerald focus:ring-1 focus:ring-emerald/30 focus:outline-none transition-colors" placeholder="Your company" value={ngo_formData.company} onChange={(e) => setNgoFormData({...ngo_formData, company: e.target.value})} />
                         </div>
                         <div>
                           <label className="block text-sm font-bold text-forest mb-2">Work Email *</label>
-                          <input type="email" required className="w-full rounded-xl border border-sand/50 bg-cream px-4 py-3 text-sm focus:border-emerald focus:ring-1 focus:ring-emerald/30 focus:outline-none transition-colors" placeholder="you@company.com" value={formData.email} onChange={(e) => setFormData({...formData, email: e.target.value})} />
+                          <input type="email" required className="w-full rounded-xl border border-sand/50 bg-cream px-4 py-3 text-sm focus:border-emerald focus:ring-1 focus:ring-emerald/30 focus:outline-none transition-colors" placeholder="you@company.com" value={ngo_formData.email} onChange={(e) => setNgoFormData({...ngo_formData, email: e.target.value})} />
                         </div>
                       </div>
                       <div className="flex justify-end">
-                        <motion.button whileTap={{ scale: 0.95 }} type="button" onClick={nextStep} className="h-11 px-8 rounded-full bg-emerald text-white font-bold text-sm flex items-center gap-2 shadow-md hover:shadow-lg transition-shadow">
+                        <motion.button whileTap={{ scale: 0.95 }} type="button" onClick={ngo_nextStep} className="h-11 px-8 rounded-full bg-emerald text-white font-bold text-sm flex items-center gap-2 shadow-md hover:shadow-lg transition-shadow">
                           Next <ChevronRight className="w-4 h-4" />
                         </motion.button>
                       </div>
                     </motion.div>
                   )}
 
-                  {formStep === 1 && (
+                  {ngo_formStep === 1 && (
                     <motion.div key="step1" initial={{ opacity: 0, x: 20 }} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 0, x: -20 }} className="space-y-5">
                       <h3 className="text-lg font-bold text-forest">CSR Goals</h3>
                       <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
                         <div>
                           <label className="block text-sm font-bold text-forest mb-2">Phone</label>
-                          <input type="tel" className="w-full rounded-xl border border-sand/50 bg-cream px-4 py-3 text-sm focus:border-emerald focus:ring-1 focus:ring-emerald/30 focus:outline-none transition-colors" placeholder="+91 98765 43210" value={formData.phone} onChange={(e) => setFormData({...formData, phone: e.target.value})} />
+                          <input type="tel" className="w-full rounded-xl border border-sand/50 bg-cream px-4 py-3 text-sm focus:border-emerald focus:ring-1 focus:ring-emerald/30 focus:outline-none transition-colors" placeholder="+91 98765 43210" value={ngo_formData.phone} onChange={(e) => setNgoFormData({...ngo_formData, phone: e.target.value})} />
                         </div>
                         <div>
                           <label className="block text-sm font-bold text-forest mb-2">Number of Trees</label>
-                          <select className="w-full rounded-xl border border-sand/50 bg-cream px-4 py-3 text-sm focus:border-emerald focus:ring-1 focus:ring-emerald/30 focus:outline-none transition-colors" value={formData.trees} onChange={(e) => setFormData({...formData, trees: e.target.value})}>
+                          <select className="w-full rounded-xl border border-sand/50 bg-cream px-4 py-3 text-sm focus:border-emerald focus:ring-1 focus:ring-emerald/30 focus:outline-none transition-colors" value={ngo_formData.trees} onChange={(e) => setNgoFormData({...ngo_formData, trees: e.target.value})}>
                             <option value="">Select range</option>
                             <option>100 – 500</option>
                             <option>500 – 1,000</option>
@@ -263,23 +263,23 @@ export default function CSR() {
                         </div>
                       </div>
                       <div className="flex justify-between">
-                        <button type="button" onClick={prevStep} className="h-11 px-6 rounded-full border border-sand/50 text-forest font-bold text-sm hover:bg-cream transition-colors">Back</button>
-                        <motion.button whileTap={{ scale: 0.95 }} type="button" onClick={nextStep} className="h-11 px-8 rounded-full bg-emerald text-white font-bold text-sm flex items-center gap-2 shadow-md hover:shadow-lg transition-shadow">
+                        <button type="button" onClick={ngo_prevStep} className="h-11 px-6 rounded-full border border-sand/50 text-forest font-bold text-sm hover:bg-cream transition-colors">Back</button>
+                        <motion.button whileTap={{ scale: 0.95 }} type="button" onClick={ngo_nextStep} className="h-11 px-8 rounded-full bg-emerald text-white font-bold text-sm flex items-center gap-2 shadow-md hover:shadow-lg transition-shadow">
                           Next <ChevronRight className="w-4 h-4" />
                         </motion.button>
                       </div>
                     </motion.div>
                   )}
 
-                  {formStep === 2 && (
+                  {ngo_formStep === 2 && (
                     <motion.div key="step2" initial={{ opacity: 0, x: 20 }} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 0, x: -20 }} className="space-y-5">
                       <h3 className="text-lg font-bold text-forest">Additional Details</h3>
                       <div>
                         <label className="block text-sm font-bold text-forest mb-2">Message</label>
-                        <textarea rows={4} className="w-full rounded-xl border border-sand/50 bg-cream px-4 py-3 text-sm focus:border-emerald focus:ring-1 focus:ring-emerald/30 focus:outline-none transition-colors resize-none" placeholder="Tell us about your CSR goals..." value={formData.message} onChange={(e) => setFormData({...formData, message: e.target.value})}></textarea>
+                        <textarea rows={4} className="w-full rounded-xl border border-sand/50 bg-cream px-4 py-3 text-sm focus:border-emerald focus:ring-1 focus:ring-emerald/30 focus:outline-none transition-colors resize-none" placeholder="Tell us about your CSR goals..." value={ngo_formData.message} onChange={(e) => setNgoFormData({...ngo_formData, message: e.target.value})}></textarea>
                       </div>
                       <div className="flex justify-between">
-                        <button type="button" onClick={prevStep} className="h-11 px-6 rounded-full border border-sand/50 text-forest font-bold text-sm hover:bg-cream transition-colors">Back</button>
+                        <button type="button" onClick={ngo_prevStep} className="h-11 px-6 rounded-full border border-sand/50 text-forest font-bold text-sm hover:bg-cream transition-colors">Back</button>
                         <motion.button whileTap={{ scale: 0.95 }} type="submit" className="h-11 px-10 rounded-full bg-gradient-gold text-white font-bold text-sm flex items-center gap-2 shadow-lg hover:shadow-xl transition-shadow">
                           Submit Enquiry <ArrowRight className="w-4 h-4" />
                         </motion.button>

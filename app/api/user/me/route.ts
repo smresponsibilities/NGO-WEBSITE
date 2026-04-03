@@ -1,23 +1,23 @@
 import { NextRequest, NextResponse } from "next/server";
-import { verifyToken } from "../../../../utils/auth";
-import dbConnect from "../../../../lib/mongodb";
+import { ngo_verifyToken } from "../../../../utils/auth";
+import ngo_dbConnect from "../../../../lib/mongodb";
 import User from "../../../../models/User";
 
 export async function GET(req: NextRequest) {
   try {
-    const token = req.cookies.get("auth_token")?.value;
-    if(!token) throw new Error("Unauthorized");
-    const payload: any = await verifyToken(token);
+    const ngo_authToken = req.cookies.get("auth_token")?.value;
+    if(!ngo_authToken) throw new Error("Unauthorized");
+    const ngo_payload: any = await ngo_verifyToken(ngo_authToken);
     
-    if (payload.userId === "admin_env") {
+    if (ngo_payload.userId === "admin_env") {
       return NextResponse.json({ user: { name: "System Admin", email: "admin@renukiran.org", role: "admin" }});
     }
 
-    await dbConnect();
-    const user = await User.findById(payload.userId);
-    if (!user) throw new Error("User missing");
+    await ngo_dbConnect();
+    const ngo_foundUser = await User.findById(ngo_payload.userId);
+    if (!ngo_foundUser) throw new Error("User missing");
 
-    return NextResponse.json({ user: { name: user.name, email: user.email }});
+    return NextResponse.json({ user: { name: ngo_foundUser.name, email: ngo_foundUser.email }});
   } catch(e) {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
   }

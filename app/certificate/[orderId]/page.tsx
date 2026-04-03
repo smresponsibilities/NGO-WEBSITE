@@ -4,7 +4,7 @@ import { useState, useEffect } from "react";
 import { useParams } from "next/navigation";
 import Script from "next/script";
 
-const LeafLogo = () => (
+const NgoLeafLogo = () => (
   <svg width="32" height="32" viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg">
     <path d="M16 2C16 2 6 8 6 18C6 23.5228 10.4772 28 16 28C21.5228 28 26 23.5228 26 18C26 8 16 2 16 2Z" fill="#047857" opacity="0.9"/>
     <path d="M16 8C16 8 11 13 11 19C11 21.7614 13.2386 24 16 24C18.7614 24 21 21.7614 21 19C21 13 16 8 16 8Z" fill="#34d399" opacity="0.6"/>
@@ -17,34 +17,34 @@ const LeafLogo = () => (
 export default function CertificatePage() {
   const params = useParams();
   const orderId = params.orderId as string;
-  const [data, setData] = useState<any>(null);
-  const [loading, setLoading] = useState(true);
-  const [downloading, setDownloading] = useState(false);
-  const [error, setError] = useState("");
+  const [ngo_certData, setNgoCertData] = useState<any>(null);
+  const [ngo_loading, setNgoLoading] = useState(true);
+  const [ngo_downloading, setNgoDownloading] = useState(false);
+  const [ngo_error, setNgoError] = useState("");
 
   useEffect(() => {
     fetch(`/api/certificate/${orderId}`)
       .then((res) => res.json())
       .then((json) => {
-        if (json.error) setError(json.error);
-        else setData(json);
+        if (json.error) setNgoError(json.error);
+        else setNgoCertData(json);
       })
-      .catch(() => setError("Failed to load certificate"))
-      .finally(() => setLoading(false));
+      .catch(() => setNgoError("Failed to load certificate"))
+      .finally(() => setNgoLoading(false));
   }, [orderId]);
 
-  const handleDownload = async () => {
-    if (!data || !(window as any).domtoimage || !(window as any).jspdf) return;
-    setDownloading(true);
+  const ngo_handleDownload = async () => {
+    if (!ngo_certData || !(window as any).domtoimage || !(window as any).jspdf) return;
+    setNgoDownloading(true);
 
     try {
-      const element = document.getElementById("certificate-card");
-      if (!element) return;
+      const ngo_certElement = document.getElementById("certificate-card");
+      if (!ngo_certElement) return;
 
-      const dataUrl = await (window as any).domtoimage.toPng(element, {
+      const ngo_dataUrl = await (window as any).domtoimage.toPng(ngo_certElement, {
         quality: 1,
-        width: element.clientWidth * 2,
-        height: element.clientHeight * 2,
+        width: ngo_certElement.clientWidth * 2,
+        height: ngo_certElement.clientHeight * 2,
         style: {
           transform: 'scale(2)',
           transformOrigin: 'top left',
@@ -54,27 +54,27 @@ export default function CertificatePage() {
       });
 
       const { jsPDF } = (window as any).jspdf;
-      const pdf = new jsPDF({
+      const ngo_pdf = new jsPDF({
         orientation: "landscape",
         unit: "mm",
         format: "a4",
       });
 
-      const pdfWidth = pdf.internal.pageSize.getWidth();
-      const pdfHeight = (element.clientHeight * pdfWidth) / element.clientWidth;
+      const ngo_pdfWidth = ngo_pdf.internal.pageSize.getWidth();
+      const ngo_pdfHeight = (ngo_certElement.clientHeight * ngo_pdfWidth) / ngo_certElement.clientWidth;
 
-      pdf.addImage(dataUrl, "PNG", 0, 0, pdfWidth, pdfHeight);
-      pdf.save(`Renukiran_Certificate_${data.certificateId}.pdf`);
+      ngo_pdf.addImage(ngo_dataUrl, "PNG", 0, 0, ngo_pdfWidth, ngo_pdfHeight);
+      ngo_pdf.save(`Renukiran_Certificate_${ngo_certData.certificateId}.pdf`);
     } catch (err) {
       console.error("PDF generation failed:", err);
       alert("Direct download failed due to browser color incompatibilities. Opening print dialog as fallback...");
       window.print();
     } finally {
-      setDownloading(false);
+      setNgoDownloading(false);
     }
   };
 
-  if (loading) {
+  if (ngo_loading) {
     return (
       <div className="min-h-screen flex items-center justify-center bg-cream">
         <div className="text-center">
@@ -85,25 +85,25 @@ export default function CertificatePage() {
     );
   }
 
-  if (error || !data) {
+  if (ngo_error || !ngo_certData) {
     return (
       <div className="min-h-screen flex items-center justify-center bg-cream">
         <div className="text-center bg-white p-10 rounded-3xl border border-sand shadow-lg max-w-md">
           <span className="text-5xl mb-4 inline-block">⚠️</span>
           <h2 className="text-2xl font-bold text-forest mb-2">Certificate Unavailable</h2>
-          <p className="text-earth">{error || "This certificate could not be loaded."}</p>
+          <p className="text-earth">{ngo_error || "This certificate could not be loaded."}</p>
         </div>
       </div>
     );
   }
 
-  const date = new Date(data.createdAt).toLocaleDateString("en-IN", {
+  const ngo_issueDate = new Date(ngo_certData.createdAt).toLocaleDateString("en-IN", {
     day: "2-digit",
     month: "2-digit",
     year: "numeric",
   });
 
-  const treeSummary = data.trees
+  const ngo_treeSummary = ngo_certData.trees
     .map((t: any) => `${t.quantity}x ${t.name}`)
     .join(", ");
 
@@ -168,13 +168,13 @@ export default function CertificatePage() {
       {/* Download button — hidden when printing */}
       <div className="no-print fixed top-24 left-4 z-[100]">
         <button
-          onClick={handleDownload}
-          disabled={downloading}
+          onClick={ngo_handleDownload}
+          disabled={ngo_downloading}
           className={`flex items-center gap-2 bg-gradient-to-r from-primary to-primary-light text-white font-bold px-8 py-4 rounded-full shadow-xl hover:shadow-2xl hover:scale-105 transition-all ${
-            downloading ? "opacity-70 cursor-not-allowed" : ""
+            ngo_downloading ? "opacity-70 cursor-not-allowed" : ""
           }`}
         >
-          {downloading ? (
+          {ngo_downloading ? (
             <div className="w-5 h-5 border-2 border-white/20 border-t-white rounded-full animate-spin"></div>
           ) : (
             <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
@@ -183,7 +183,7 @@ export default function CertificatePage() {
               <line x1="12" y1="15" x2="12" y2="3" />
             </svg>
           )}
-          {downloading ? "Generating PDF..." : "Download Certificate"}
+          {ngo_downloading ? "Generating PDF..." : "Download Certificate"}
         </button>
       </div>
 
@@ -242,7 +242,7 @@ export default function CertificatePage() {
             {/* Header Section */}
             <div className="flex-1 max-w-[55%] flex flex-col">
               <div className="flex items-center gap-3 mb-10">
-                <LeafLogo />
+                <NgoLeafLogo />
                 <div>
                   <p className="font-bold text-[#0c2e1a] text-lg tracking-wide heading-serif">Renukiran</p>
                   <p className="text-[#6b6b5e] text-[10px] font-bold uppercase tracking-[0.2em] leading-none">Foundation</p>
@@ -259,7 +259,7 @@ export default function CertificatePage() {
                   This is to officially recognize
                 </p>
                 <p className="text-[#047857] text-4xl font-black heading-serif truncate">
-                  {data.userName}
+                  {ngo_certData.userName}
                 </p>
               </div>
 
@@ -268,18 +268,18 @@ export default function CertificatePage() {
                   For the environmental stewardship of
                 </p>
                 <h2 className="text-[#0c2e1a] text-xl font-bold leading-relaxed line-clamp-2">
-                  {treeSummary}
+                  {ngo_treeSummary}
                 </h2>
               </div>
 
               <div className="flex items-center gap-8 border-t border-[#e8dcc8] pt-8 mt-auto">
                 <div>
                   <p className="text-[#6b6b5e] text-[9px] uppercase tracking-[0.15em] mb-1 opacity-70">Date of Issue</p>
-                  <p className="text-[#0c2e1a] font-black text-sm font-mono whitespace-nowrap">{date}</p>
+                  <p className="text-[#0c2e1a] font-black text-sm font-mono whitespace-nowrap">{ngo_issueDate}</p>
                 </div>
                 <div>
                   <p className="text-[#6b6b5e] text-[9px] font-bold uppercase tracking-[0.15em] mb-1 opacity-70 whitespace-nowrap">Certificate Number</p>
-                  <p className="text-[#0c2e1a] font-black text-sm font-mono whitespace-nowrap">{data.certificateId}</p>
+                  <p className="text-[#0c2e1a] font-black text-sm font-mono whitespace-nowrap">{ngo_certData.certificateId}</p>
                 </div>
               </div>
             </div>
@@ -301,7 +301,7 @@ export default function CertificatePage() {
               >
                 <p className="text-white/60 text-[9px] font-bold uppercase tracking-[0.15em] mb-2">Total Contribution</p>
                 <p className="text-white text-4xl font-black heading-serif whitespace-nowrap">
-                   ₹{data.totalAmount}
+                   ₹{ngo_certData.totalAmount}
                 </p>
              </div>
              
@@ -310,7 +310,7 @@ export default function CertificatePage() {
                   <p className="text-white font-black text-xl tracking-tight heading-serif leading-none">Renukiran</p>
                 </div>
                 <div className="w-10 h-10 rounded-xl bg-white flex items-center justify-center shadow-xl" style={{ backgroundColor: '#ffffff' }}>
-                  <LeafLogo />
+                  <NgoLeafLogo />
                 </div>
              </div>
           </div>
@@ -318,7 +318,7 @@ export default function CertificatePage() {
           {/* Dynamic Legal Registry ID watermark */}
           <div className="absolute bottom-4 left-1/2 -translate-x-1/2 z-20 opacity-30 w-full text-center">
             <p className="text-black text-[9px] font-mono tracking-[0.3em] uppercase">
-              Authenticated Digital Registry ID • <span className="font-bold">{data.certificateId}</span>
+              Authenticated Digital Registry ID • <span className="font-bold">{ngo_certData.certificateId}</span>
             </p>
           </div>
         </div>

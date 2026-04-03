@@ -1,8 +1,8 @@
 import { NextResponse } from "next/server";
-import dbConnect from "../../../../lib/mongodb";
+import ngo_dbConnect from "../../../../lib/mongodb";
 import User from "../../../../models/User";
 import bcrypt from "bcryptjs";
-import { signToken } from "../../../../utils/auth";
+import { ngo_signToken } from "../../../../utils/auth";
 
 export async function POST(req: Request) {
   try {
@@ -12,45 +12,45 @@ export async function POST(req: Request) {
       return NextResponse.json({ error: "Missing fields" }, { status: 400 });
     }
 
-    const ADMIN_EMAIL = process.env.ADMIN_EMAIL || "admin@renukiran.org";
-    const ADMIN_PASSWORD = process.env.ADMIN_PASSWORD || "admin123";
+    const NGO_ADMIN_EMAIL = process.env.ADMIN_EMAIL || "admin@renukiran.org";
+    const NGO_ADMIN_PASSWORD = process.env.ADMIN_PASSWORD || "admin123";
 
-    if (email === ADMIN_EMAIL && password === ADMIN_PASSWORD) {
-      const token = await signToken({ userId: "admin_env", role: "admin" });
-      const response = NextResponse.json({ success: true, user: { name: "System Admin", email: ADMIN_EMAIL, role: "admin" } });
-      response.cookies.set({
+    if (email === NGO_ADMIN_EMAIL && password === NGO_ADMIN_PASSWORD) {
+      const ngo_token = await ngo_signToken({ userId: "admin_env", role: "admin" });
+      const ngo_response = NextResponse.json({ success: true, user: { name: "System Admin", email: NGO_ADMIN_EMAIL, role: "admin" } });
+      ngo_response.cookies.set({
         name: "auth_token",
-        value: token,
+        value: ngo_token,
         httpOnly: true,
         path: "/",
         maxAge: 86400
       });
-      return response;
+      return ngo_response;
     }
 
-    await dbConnect();
-    const user = await User.findOne({ email });
-    if (!user) {
+    await ngo_dbConnect();
+    const ngo_foundUser = await User.findOne({ email });
+    if (!ngo_foundUser) {
       return NextResponse.json({ error: "Invalid credentials" }, { status: 401 });
     }
 
-    const isMatch = await bcrypt.compare(password, user.password);
-    if (!isMatch) {
+    const ngo_passwordMatch = await bcrypt.compare(password, ngo_foundUser.password);
+    if (!ngo_passwordMatch) {
       return NextResponse.json({ error: "Invalid credentials" }, { status: 401 });
     }
 
-    const token = await signToken({ userId: user._id.toString(), role: user.role });
+    const ngo_token = await ngo_signToken({ userId: ngo_foundUser._id.toString(), role: ngo_foundUser.role });
     
-    const response = NextResponse.json({ success: true, user: { name: user.name, email: user.email, role: user.role } });
-    response.cookies.set({
+    const ngo_response = NextResponse.json({ success: true, user: { name: ngo_foundUser.name, email: ngo_foundUser.email, role: ngo_foundUser.role } });
+    ngo_response.cookies.set({
       name: "auth_token",
-      value: token,
+      value: ngo_token,
       httpOnly: true,
       path: "/",
       maxAge: 86400
     });
     
-    return response;
+    return ngo_response;
   } catch {
     return NextResponse.json({ error: "Service temporarily unavailable. Please try again later." }, { status: 500 });
   }

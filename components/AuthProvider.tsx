@@ -11,21 +11,21 @@ interface UserData {
 interface AuthContextType {
   user: UserData | null;
   loading: boolean;
-  refresh: () => void;
+  ngo_refresh: () => void;
 }
 
-const AuthContext = createContext<AuthContextType>({ user: null, loading: true, refresh: () => {} });
+const NgoAuthContext = createContext<AuthContextType>({ user: null, loading: true, ngo_refresh: () => {} });
 
 export function AuthProvider({ children }: { children: React.ReactNode }) {
   const [user, setUser] = useState<UserData | null>(null);
   const [loading, setLoading] = useState(true);
 
-  const fetchUser = useCallback(async () => {
+  const ngo_fetchUser = useCallback(async () => {
     try {
-      const res = await fetch("/api/user/me");
-      if (!res.ok) { setUser(null); setLoading(false); return; }
-      const data = await res.json();
-      setUser(data?.user || null);
+      const ngo_response = await fetch("/api/user/me");
+      if (!ngo_response.ok) { setUser(null); setLoading(false); return; }
+      const ngo_data = await ngo_response.json();
+      setUser(ngo_data?.user || null);
     } catch {
       setUser(null);
     } finally {
@@ -34,21 +34,21 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   }, []);
 
   useEffect(() => {
-    fetchUser();
-  }, [fetchUser]);
+    ngo_fetchUser();
+  }, [ngo_fetchUser]);
 
-  const refresh = useCallback(() => {
+  const ngo_refresh = useCallback(() => {
     setLoading(true);
-    fetchUser();
-  }, [fetchUser]);
+    ngo_fetchUser();
+  }, [ngo_fetchUser]);
 
   return (
-    <AuthContext.Provider value={{ user, loading, refresh }}>
+    <NgoAuthContext.Provider value={{ user, loading, ngo_refresh }}>
       {children}
-    </AuthContext.Provider>
+    </NgoAuthContext.Provider>
   );
 }
 
 export function useAuth() {
-  return useContext(AuthContext);
+  return useContext(NgoAuthContext);
 }

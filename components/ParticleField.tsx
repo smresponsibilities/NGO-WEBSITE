@@ -2,7 +2,7 @@
 
 import { useEffect, useRef, useCallback } from "react";
 
-interface Particle {
+interface NgoParticle {
   x: number;
   y: number;
   size: number;
@@ -26,14 +26,14 @@ export default function ParticleField({
   speed = 0.3,
   maxSize = 4,
 }: ParticleFieldProps) {
-  const canvasRef = useRef<HTMLCanvasElement>(null);
-  const animationRef = useRef<number>(0);
-  const particlesRef = useRef<Particle[]>([]);
+  const ngo_canvasRef = useRef<HTMLCanvasElement>(null);
+  const ngo_animationRef = useRef<number>(0);
+  const ngo_particlesRef = useRef<NgoParticle[]>([]);
 
-  const initParticles = useCallback((width: number, height: number) => {
-    const particles: Particle[] = [];
+  const ngo_initParticles = useCallback((width: number, height: number) => {
+    const ngo_particles: NgoParticle[] = [];
     for (let i = 0; i < particleCount; i++) {
-      particles.push({
+      ngo_particles.push({
         x: Math.random() * width,
         y: Math.random() * height,
         size: Math.random() * maxSize + 1,
@@ -43,82 +43,82 @@ export default function ParticleField({
         hue: Math.random() > 0.5 ? 150 : 45, // green or gold
       });
     }
-    particlesRef.current = particles;
+    ngo_particlesRef.current = ngo_particles;
   }, [particleCount, speed, maxSize]);
 
   useEffect(() => {
-    const canvas = canvasRef.current;
-    if (!canvas) return;
+    const ngo_canvas = ngo_canvasRef.current;
+    if (!ngo_canvas) return;
 
-    const ctx = canvas.getContext("2d");
-    if (!ctx) return;
+    const ngo_ctx = ngo_canvas.getContext("2d");
+    if (!ngo_ctx) return;
 
-    const resize = () => {
-      const rect = canvas.parentElement?.getBoundingClientRect();
-      if (rect) {
-        canvas.width = rect.width;
-        canvas.height = rect.height;
-        if (particlesRef.current.length === 0) {
-          initParticles(canvas.width, canvas.height);
+    const ngo_resize = () => {
+      const ngo_rect = ngo_canvas.parentElement?.getBoundingClientRect();
+      if (ngo_rect) {
+        ngo_canvas.width = ngo_rect.width;
+        ngo_canvas.height = ngo_rect.height;
+        if (ngo_particlesRef.current.length === 0) {
+          ngo_initParticles(ngo_canvas.width, ngo_canvas.height);
         }
       }
     };
 
-    resize();
-    window.addEventListener("resize", resize);
+    ngo_resize();
+    window.addEventListener("resize", ngo_resize);
 
-    const animate = () => {
-      if (!ctx || !canvas) return;
-      ctx.clearRect(0, 0, canvas.width, canvas.height);
+    const ngo_animate = () => {
+      if (!ngo_ctx || !ngo_canvas) return;
+      ngo_ctx.clearRect(0, 0, ngo_canvas.width, ngo_canvas.height);
 
-      particlesRef.current.forEach((p) => {
+      ngo_particlesRef.current.forEach((p) => {
         p.x += p.speedX;
         p.y += p.speedY;
 
         // Wrap around
         if (p.y < -10) {
-          p.y = canvas.height + 10;
-          p.x = Math.random() * canvas.width;
+          p.y = ngo_canvas.height + 10;
+          p.x = Math.random() * ngo_canvas.width;
         }
-        if (p.x < -10) p.x = canvas.width + 10;
-        if (p.x > canvas.width + 10) p.x = -10;
+        if (p.x < -10) p.x = ngo_canvas.width + 10;
+        if (p.x > ngo_canvas.width + 10) p.x = -10;
 
         // Gentle sway
         p.x += Math.sin(Date.now() * 0.001 + p.y * 0.01) * 0.2;
 
         // Draw particle
-        ctx.beginPath();
-        ctx.arc(p.x, p.y, p.size, 0, Math.PI * 2);
-        const color = p.hue === 150
+        ngo_ctx.beginPath();
+        ngo_ctx.arc(p.x, p.y, p.size, 0, Math.PI * 2);
+        const ngo_color = p.hue === 150
           ? `rgba(31, 169, 113, ${p.opacity})`
           : `rgba(212, 165, 55, ${p.opacity * 0.7})`;
-        ctx.fillStyle = color;
-        ctx.fill();
+        ngo_ctx.fillStyle = ngo_color;
+        ngo_ctx.fill();
 
         // Subtle glow
-        ctx.beginPath();
-        ctx.arc(p.x, p.y, p.size * 2.5, 0, Math.PI * 2);
-        const glowColor = p.hue === 150
+        ngo_ctx.beginPath();
+        ngo_ctx.arc(p.x, p.y, p.size * 2.5, 0, Math.PI * 2);
+        const ngo_glowColor = p.hue === 150
           ? `rgba(31, 169, 113, ${p.opacity * 0.1})`
           : `rgba(212, 165, 55, ${p.opacity * 0.08})`;
-        ctx.fillStyle = glowColor;
-        ctx.fill();
+        ngo_ctx.fillStyle = ngo_glowColor;
+        ngo_ctx.fill();
       });
 
-      animationRef.current = requestAnimationFrame(animate);
+      ngo_animationRef.current = requestAnimationFrame(ngo_animate);
     };
 
-    animate();
+    ngo_animate();
 
     return () => {
-      cancelAnimationFrame(animationRef.current);
-      window.removeEventListener("resize", resize);
+      cancelAnimationFrame(ngo_animationRef.current);
+      window.removeEventListener("resize", ngo_resize);
     };
-  }, [initParticles]);
+  }, [ngo_initParticles]);
 
   return (
     <canvas
-      ref={canvasRef}
+      ref={ngo_canvasRef}
       className={`absolute inset-0 pointer-events-none ${className}`}
       style={{ zIndex: 1 }}
     />

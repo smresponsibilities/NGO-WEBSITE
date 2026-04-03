@@ -9,49 +9,49 @@ import { Mail, Lock, ArrowRight, Leaf, LogIn } from "lucide-react";
 import { useAuth } from "../../components/AuthProvider";
 
 export default function Login() {
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
-  const [error, setError] = useState("");
-  const [loading, setLoading] = useState(false);
-  const router = useRouter();
-  const { refresh } = useAuth();
+  const [ngo_email, setNgoEmail] = useState("");
+  const [ngo_password, setNgoPassword] = useState("");
+  const [ngo_error, setNgoError] = useState("");
+  const [ngo_loading, setNgoLoading] = useState(false);
+  const ngo_router = useRouter();
+  const { ngo_refresh } = useAuth();
 
-  const handleLogin = async (e: React.FormEvent) => {
+  const ngo_handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
-    setError("");
-    setLoading(true);
+    setNgoError("");
+    setNgoLoading(true);
 
     try {
-      const res = await fetch("/api/auth/login", {
+      const ngo_res = await fetch("/api/auth/login", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ email, password }),
+        body: JSON.stringify({ email: ngo_email, password: ngo_password }),
       });
-      const data = await res.json();
+      const ngo_data = await ngo_res.json();
       
-      if (!res.ok) {
-        const msg = (data.error && !data.error.includes("EBADNAME") && !data.error.includes("querySrv")) 
-          ? data.error 
+      if (!ngo_res.ok) {
+        const ngo_msg = (ngo_data.error && !ngo_data.error.includes("EBADNAME") && !ngo_data.error.includes("querySrv")) 
+          ? ngo_data.error 
           : "Unable to connect to server. Please try again later.";
-        toast.error(msg);
-        setError(msg);
-        setLoading(false);
+        toast.error(ngo_msg);
+        setNgoError(ngo_msg);
+        setNgoLoading(false);
         return;
       }
       
       toast.success("Welcome back!");
-      refresh();
+      ngo_refresh();
       
-      if (data.user.role === "admin") {
-        router.push("/admin");
+      if (ngo_data.user.role === "admin") {
+        ngo_router.push("/admin");
       } else {
-        router.push("/dashboard");
+        ngo_router.push("/dashboard");
       }
-      router.refresh();
+      ngo_router.refresh();
     } catch {
       toast.error("Network error. Please try again.");
-      setError("Network error. Please try again.");
-      setLoading(false);
+      setNgoError("Network error. Please try again.");
+      setNgoLoading(false);
     }
   };
 
@@ -107,17 +107,17 @@ export default function Login() {
           <h1 className="heading-serif text-3xl font-black text-forest mb-2">Welcome back</h1>
           <p className="text-earth text-sm font-accent mb-8">Sign in to your dashboard to track your trees and impact.</p>
           
-          {error && (
+          {ngo_error && (
             <motion.div
               initial={{ opacity: 0, y: -10 }}
               animate={{ opacity: 1, y: 0 }}
               className="bg-red-50 text-red-500 font-medium p-3 rounded-xl text-sm mb-5 text-center border border-red-100"
             >
-              {error}
+              {ngo_error}
             </motion.div>
           )}
           
-          <form onSubmit={handleLogin} className="flex flex-col gap-4">
+          <form onSubmit={ngo_handleLogin} className="flex flex-col gap-4">
             <div>
               <label className="text-sm font-bold text-forest mb-2 block">Email</label>
               <div className="relative">
@@ -125,8 +125,8 @@ export default function Login() {
                 <input 
                   type="email" 
                   required 
-                  value={email}
-                  onChange={e => setEmail(e.target.value)}
+                  value={ngo_email}
+                  onChange={e => setNgoEmail(e.target.value)}
                   className="w-full rounded-xl bg-surface border border-sand/60 pl-10 pr-4 py-3 text-sm outline-none focus:border-emerald focus:ring-1 focus:ring-emerald/30 transition-all font-medium text-forest" 
                   placeholder="you@example.com"
                 />
@@ -139,8 +139,8 @@ export default function Login() {
                 <input 
                   type="password" 
                   required 
-                  value={password}
-                  onChange={e => setPassword(e.target.value)}
+                  value={ngo_password}
+                  onChange={e => setNgoPassword(e.target.value)}
                   className="w-full rounded-xl bg-surface border border-sand/60 pl-10 pr-4 py-3 text-sm outline-none focus:border-emerald focus:ring-1 focus:ring-emerald/30 transition-all font-medium text-forest" 
                   placeholder="••••••••"
                 />
@@ -150,10 +150,10 @@ export default function Login() {
               whileHover={{ scale: 1.01 }}
               whileTap={{ scale: 0.98 }}
               type="submit"
-              disabled={loading}
+              disabled={ngo_loading}
               className="mt-2 w-full font-bold py-3.5 rounded-xl bg-emerald text-white flex items-center justify-center gap-2 shadow-lg shadow-emerald/20 hover:shadow-xl hover:shadow-emerald/30 transition-all btn-glow disabled:opacity-50"
             >
-              {loading ? (
+              {ngo_loading ? (
                 <span className="w-5 h-5 border-2 border-white/30 border-t-white rounded-full animate-spin" />
               ) : (
                 <>

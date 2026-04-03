@@ -6,7 +6,7 @@ import { Target, Trees, TrendingUp, MapPin, Clock, BarChart3, Leaf, ArrowRight, 
 import { AreaChart, Area, BarChart, Bar, ResponsiveContainer, XAxis, YAxis, Tooltip, PieChart, Pie, Cell } from "recharts";
 import SectionReveal, { StaggerContainer, StaggerItem } from "../../components/SectionReveal";
 
-const timeline = [
+const ngo_trackingTimeline = [
   { date: "Mar 2026", event: "Delhi NCR Miyawaki Forest — 500 trees planted", icon: Trees },
   { date: "Feb 2026", event: "EcoBank joins as CSR partner — 25,000 trees committed", icon: Target },
   { date: "Jan 2026", event: "Aravalli project crosses 10,000 trees milestone", icon: TrendingUp },
@@ -14,41 +14,41 @@ const timeline = [
   { date: "Nov 2025", event: "92% survival rate across all projects — quarterly report", icon: BarChart3 },
 ];
 
-const growthData = [
+const ngo_growthData = [
   { month: "Jul", trees: 800000 }, { month: "Aug", trees: 850000 }, { month: "Sep", trees: 920000 },
   { month: "Oct", trees: 980000 }, { month: "Nov", trees: 1050000 }, { month: "Dec", trees: 1100000 },
   { month: "Jan", trees: 1150000 }, { month: "Feb", trees: 1180000 }, { month: "Mar", trees: 1200000 },
 ];
 
-const co2Data = [
+const ngo_co2Data = [
   { month: "Jul", co2: 3200 }, { month: "Aug", co2: 3500 }, { month: "Sep", co2: 3900 },
   { month: "Oct", co2: 4200 }, { month: "Nov", co2: 4500 }, { month: "Dec", co2: 4700 },
   { month: "Jan", co2: 5000 }, { month: "Feb", co2: 5200 }, { month: "Mar", co2: 5400 },
 ];
 
-const survivalData = [
+const ngo_survivalData = [
   { name: "Surviving", value: 92 },
   { name: "Lost", value: 8 },
 ];
 
-const SURVIVAL_COLORS = ["#1FA971", "#e8dcc8"];
+const NGO_SURVIVAL_COLORS = ["#1FA971", "#e8dcc8"];
 
 export default function Tracking() {
-  const [selectedId, setSelectedId] = useState<string | null>(null);
-  const [filter, setFilter] = useState("all");
-  const [projects, setProjects] = useState<any[]>([]);
-  const [loading, setLoading] = useState(true);
+  const [ngo_selectedId, setNgoSelectedId] = useState<string | null>(null);
+  const [ngo_filter, setNgoFilter] = useState("all");
+  const [ngo_projects, setNgoProjects] = useState<any[]>([]);
+  const [ngo_loading, setNgoLoading] = useState(true);
 
   useEffect(() => {
     fetch("/api/projects", { cache: "no-store" })
       .then(res => res.json())
-      .then(json => { setProjects(json.data || []); setLoading(false); })
-      .catch(() => setLoading(false));
+      .then(json => { setNgoProjects(json.data || []); setNgoLoading(false); })
+      .catch(() => setNgoLoading(false));
   }, []);
 
-  const filtered = filter === "all" ? projects : projects.filter((p) => p.status.toLowerCase() === filter);
-  const totalPlanned = projects.reduce((s, p) => s + (p.targetTrees || 0), 0);
-  const totalPlanted = projects.reduce((s, p) => s + (p.treesPlanted || 0), 0);
+  const ngo_filtered = ngo_filter === "all" ? ngo_projects : ngo_projects.filter((p) => p.status.toLowerCase() === ngo_filter);
+  const ngo_totalPlanned = ngo_projects.reduce((s, p) => s + (p.targetTrees || 0), 0);
+  const ngo_totalPlanted = ngo_projects.reduce((s, p) => s + (p.treesPlanted || 0), 0);
 
   return (
     <main className="flex-1 w-full max-w-[1400px] mx-auto px-5 lg:px-10 py-8 space-y-12">
@@ -66,10 +66,10 @@ export default function Tracking() {
       {/* Stats */}
       <StaggerContainer className="grid grid-cols-2 md:grid-cols-4 gap-4">
         {[
-          { icon: Target, label: "Trees Planned", value: totalPlanned.toLocaleString(), gradient: "from-amber-500/10 to-yellow-500/10" },
-          { icon: Trees, label: "Trees Planted", value: totalPlanted.toLocaleString(), gradient: "from-emerald/10 to-green-500/10" },
+          { icon: Target, label: "Trees Planned", value: ngo_totalPlanned.toLocaleString(), gradient: "from-amber-500/10 to-yellow-500/10" },
+          { icon: Trees, label: "Trees Planted", value: ngo_totalPlanted.toLocaleString(), gradient: "from-emerald/10 to-green-500/10" },
           { icon: TrendingUp, label: "Survival Rate", value: "92%", gradient: "from-sky-500/10 to-blue-500/10" },
-          { icon: MapPin, label: "Active Zones", value: projects.filter(p => p.status === "Active").length.toString(), gradient: "from-rose-500/10 to-pink-500/10" },
+          { icon: MapPin, label: "Active Zones", value: ngo_projects.filter(p => p.status === "Active").length.toString(), gradient: "from-rose-500/10 to-pink-500/10" },
         ].map((s, i) => (
           <StaggerItem key={i}>
             <motion.div whileHover={{ y: -4 }} className="flex flex-col gap-3 p-5 rounded-2xl bg-surface border border-sand/50 shadow-sm hover:shadow-lg hover:border-emerald/15 transition-all group">
@@ -95,7 +95,7 @@ export default function Tracking() {
               <p className="text-xs font-bold text-earth uppercase tracking-wider mb-1 font-accent">Trees Planted</p>
               <p className="text-xl font-black text-forest heading-serif mb-3">1.2M+</p>
               <ResponsiveContainer width="100%" height={120}>
-                <AreaChart data={growthData}>
+                <AreaChart data={ngo_growthData}>
                   <defs>
                     <linearGradient id="colorTrees" x1="0" y1="0" x2="0" y2="1">
                       <stop offset="5%" stopColor="#1FA971" stopOpacity={0.3} />
@@ -114,7 +114,7 @@ export default function Tracking() {
               <p className="text-xs font-bold text-earth uppercase tracking-wider mb-1 font-accent">CO₂ Offset (Tons)</p>
               <p className="text-xl font-black text-forest heading-serif mb-3">50K+</p>
               <ResponsiveContainer width="100%" height={120}>
-                <BarChart data={co2Data}>
+                <BarChart data={ngo_co2Data}>
                   <XAxis dataKey="month" tick={{ fontSize: 10, fill: "#6b6b5e" }} axisLine={false} tickLine={false} />
                   <Tooltip contentStyle={{ borderRadius: 12, border: "1px solid #e8dcc8", fontSize: 12 }} />
                   <Bar dataKey="co2" fill="#D4A537" radius={[4, 4, 0, 0]} />
@@ -129,9 +129,9 @@ export default function Tracking() {
               <div className="flex items-center justify-center">
                 <ResponsiveContainer width={140} height={120}>
                   <PieChart>
-                    <Pie data={survivalData} innerRadius={35} outerRadius={55} dataKey="value" startAngle={90} endAngle={-270}>
-                      {survivalData.map((_, index) => (
-                        <Cell key={`cell-${index}`} fill={SURVIVAL_COLORS[index]} />
+                    <Pie data={ngo_survivalData} innerRadius={35} outerRadius={55} dataKey="value" startAngle={90} endAngle={-270}>
+                      {ngo_survivalData.map((_, index) => (
+                        <Cell key={`cell-${index}`} fill={NGO_SURVIVAL_COLORS[index]} />
                       ))}
                     </Pie>
                     <Tooltip contentStyle={{ borderRadius: 12, border: "1px solid #e8dcc8", fontSize: 12 }} />
@@ -179,7 +179,7 @@ export default function Tracking() {
             </motion.div>
           ))}
           <div className="absolute bottom-4 left-4 bg-white/10 backdrop-blur-sm rounded-xl px-4 py-2 border border-white/10">
-            <p className="text-white/60 font-bold text-sm font-accent">{projects.length} plantation zones</p>
+            <p className="text-white/60 font-bold text-sm font-accent">{ngo_projects.length} plantation zones</p>
           </div>
         </div>
       </SectionReveal>
@@ -190,29 +190,29 @@ export default function Tracking() {
           <h2 className="heading-serif text-2xl font-bold text-forest">Projects</h2>
           <div className="flex gap-2">
             {["all", "active", "completed"].map((s) => (
-              <motion.button whileTap={{ scale: 0.95 }} key={s} onClick={() => setFilter(s)} className={`px-4 py-2 rounded-full text-sm font-bold capitalize transition-all ${filter === s ? "bg-emerald text-white shadow-md shadow-emerald/20" : "bg-surface text-earth border border-sand/50 hover:border-emerald/20"}`}>{s}</motion.button>
+              <motion.button whileTap={{ scale: 0.95 }} key={s} onClick={() => setNgoFilter(s)} className={`px-4 py-2 rounded-full text-sm font-bold capitalize transition-all ${ngo_filter === s ? "bg-emerald text-white shadow-md shadow-emerald/20" : "bg-surface text-earth border border-sand/50 hover:border-emerald/20"}`}>{s}</motion.button>
             ))}
           </div>
         </SectionReveal>
 
-        {loading ? (
+        {ngo_loading ? (
           <div className="flex flex-col items-center justify-center py-20 bg-surface rounded-2xl border border-sand/50">
             <Leaf className="w-8 h-8 text-emerald anim-pulse-dot mb-4" />
             <p className="font-bold text-forest">Loading impact data...</p>
           </div>
-        ) : filtered.length === 0 ? (
+        ) : ngo_filtered.length === 0 ? (
           <div className="flex flex-col items-center justify-center py-20 bg-surface rounded-2xl border border-sand/50">
             <MapPin className="w-8 h-8 text-earth/30 mb-4" />
             <p className="font-bold text-forest">No projects match your filter.</p>
           </div>
         ) : (
           <StaggerContainer className="grid grid-cols-1 lg:grid-cols-2 gap-5">
-            {filtered.map((p) => (
+            {ngo_filtered.map((p) => (
               <StaggerItem key={p._id}>
                 <motion.article
                   whileHover={{ y: -2 }}
-                  className={`bg-surface rounded-2xl overflow-hidden border transition-all duration-300 cursor-pointer ${selectedId === p._id ? "border-emerald shadow-xl" : "border-sand/50 hover:shadow-lg hover:border-emerald/15"}`}
-                  onClick={() => setSelectedId(selectedId === p._id ? null : p._id)}
+                  className={`bg-surface rounded-2xl overflow-hidden border transition-all duration-300 cursor-pointer ${ngo_selectedId === p._id ? "border-emerald shadow-xl" : "border-sand/50 hover:shadow-lg hover:border-emerald/15"}`}
+                  onClick={() => setNgoSelectedId(ngo_selectedId === p._id ? null : p._id)}
                 >
                   <div className="flex flex-col md:flex-row h-full">
                     <div className="w-full md:w-32 h-32 md:h-auto shrink-0 bg-cover bg-center bg-forest" style={{backgroundImage: `url("https://images.unsplash.com/photo-1542601906990-b4d3fb778b09?auto=format&fit=crop&w=300&q=80")`}}></div>
@@ -239,7 +239,7 @@ export default function Tracking() {
                         </div>
                       </div>
                       <AnimatePresence>
-                        {selectedId === p._id && (
+                        {ngo_selectedId === p._id && (
                           <motion.div initial={{ opacity: 0, height: 0 }} animate={{ opacity: 1, height: "auto" }} exit={{ opacity: 0, height: 0 }} className="mt-4 pt-4 border-t border-cream-dark/50 space-y-3 overflow-hidden">
                             <p className="text-earth text-xs uppercase font-semibold font-accent"><Clock className="w-3 h-3 inline mr-1" /> Started: {new Date(p.createdAt).toLocaleDateString()}</p>
                             <p className="text-sm text-dark font-medium font-accent">{p.description}</p>
@@ -260,7 +260,7 @@ export default function Tracking() {
         <h2 className="heading-serif text-2xl font-bold text-forest mb-6">Timeline</h2>
         <div className="relative">
           <div className="absolute left-6 top-0 bottom-0 w-0.5 bg-emerald/15"></div>
-          {timeline.map((item, i) => (
+          {ngo_trackingTimeline.map((item, i) => (
             <motion.div
               key={i}
               initial={{ opacity: 0, x: -20 }}
